@@ -52,8 +52,8 @@
     //render information
     ctx.fillStyle = hudFill;
     ctx.font = "18px Arial";
-    ctx.fillText("Facing: "+DIRECTIONS[isFacing], 10, 20);
-    ctx.fillText("speed: " + speed, 10, 40);
+    ctx.fillText("Facing: " + DIRECTIONS[isFacing], 10, 20);
+    ctx.fillText("Speed: " + speed, 10, 40);
     //render character
     ctx.fillStyle = characterFill;
     ctx.fillRect.apply(ctx, cPos);
@@ -196,9 +196,9 @@
   ///////////////////////
   //walk stuff
   var SPEEDUP_INTERVAL = 20;
-  var SLOWDOWN_INTERVAL = 10;
+  var SLOWDOWN_INTERVAL = 50;
   var INITIAL_SPEED = 0;
-  var MAX_SPEED = 3;
+  var MAX_SPEED = 4;
   var DIRECTIONS = {
     'up':    0,
     'down':  1,
@@ -210,6 +210,7 @@
     '3':     'right'
   }
   var isFacing = 3;
+  var lastDirection = -1;
   var isWalking = false;
   var isSlowingDown = false;
   var walkingTime = 0;
@@ -219,13 +220,30 @@
     isSlowingDown = false;
     walkingTime = 0;
     speed = INITIAL_SPEED;
+    setDirection();
+  }
+  function setDirection() {
     if(isPressed('up'))    isFacing = DIRECTIONS['up'];
     if(isPressed('down'))  isFacing = DIRECTIONS['down'];
     if(isPressed('left'))  isFacing = DIRECTIONS['left'];
     if(isPressed('right')) isFacing = DIRECTIONS['right'];
   }
+  function directionChanged() {
+    var direction = isFacing;
+    setDirection();
+    if(direction !== isFacing) {
+      isFacing = direction; //change facing back
+      isSlowingDown = true;
+      return true;
+    }
+    return false;
+  }
   function walk() {
     var d = [0,0];
+    if(directionChanged()) {
+      decayWalk();
+      return;
+    }
     if(speed < MAX_SPEED) {
       walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
