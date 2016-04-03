@@ -8,6 +8,7 @@
   var CHARACTER_SIZE = 50;
   var CENTER_X       = (GAME_WIDTH/2)-(CHARACTER_SIZE/2);
   var CENTER_Y       = (GAME_HEIGHT/2)-(CHARACTER_SIZE/2);
+  console.log(`Center is ${CENTER_X}x${CENTER_Y}`)
   var TILE_SIZE      = 50;
   var MAP_WIDTH      = map[0].length * TILE_SIZE;
   var MAP_HEIGHT     = map.length * TILE_SIZE;
@@ -270,15 +271,14 @@
     if(d[X] !== 0 || d[Y] !== 0)
       changeCharacterPosition(/*ref*/d); //'d' IS PASSED BY REF AND UPDATED!
     //keep calling until we have finished moving or if we have called more than 3 times
-    if(( d[X] !== 0 || d[Y] !== 0 ) && callCount < 3) {
-      console.log(d[X], d[Y], cPos[X], cPos[Y], curOrigin[X], curOrigin[Y]);
+    if(( d[X] !== 0 || d[Y] !== 0 ) && callCount < 3)
       changePosition(/*ref*/d, callCount+1);
-    }
   }
   function changeOriginPosition(/*ref*/d) {
     //see if we should move the x origin
     if(d[X] !== 0 && shouldMoveOriginX(d[X])) {
-      //move origin x, then figure out if we moved too far  
+      //move origin x, then figure out if we moved too far 
+      console.log("move origin x");
       curOrigin[X] += d[X];
       if(curOrigin[X] < 0) {
         d[X] = curOrigin[X];
@@ -286,12 +286,13 @@
       }
       else if((curOrigin[X] + GAME_WIDTH) > MAP_WIDTH) {
         d[X] = (curOrigin[X] + GAME_WIDTH) % MAP_WIDTH;
-        curOrigin[X] = MAP_WIDTH - GAME_WIDTH - 1;
+        curOrigin[X] = MAP_WIDTH - GAME_WIDTH;
       }
     }
     //see if we should move the y origin
     if(d[Y] !== 0 && shouldMoveOriginY(d[Y])) {
       //move origin y, then figure out if we moved too far
+      console.log("move origin y");
       curOrigin[Y] += d[Y];
       if(curOrigin[Y] < 0) {
         d[Y] = curOrigin[Y];
@@ -299,59 +300,65 @@
       }
       else if((curOrigin[Y] + GAME_HEIGHT) > MAP_HEIGHT) {
         d[Y] = (curOrigin[Y] + GAME_HEIGHT) % MAP_HEIGHT;
-        curOrigin[Y] = MAP_HEIGHT - GAME_HEIGHT - 1;
+        curOrigin[Y] = MAP_HEIGHT - GAME_HEIGHT;
       }
     }
   }
   function changeCharacterPosition(/*ref*/d) {
     //see if we should move the character x position
     if(d[X] !== 0 && shouldMoveCharacterX(d[X])) {
-      console.log("move character x");
       cPos[X] += d[X];
-      if(cPos[X] < 0) {
-        d[X] = cPos[X];
-        cPos[X] = 0;
+      if(d[X] < 0) {// moving left
+        if(cPos[X] < 0) {
+          d[X] = 0;
+          cPos[X] = 0;
+        }
+	else if(curOrigin[X] !== 0 && cPos[X] < CENTER_X) {
+	  d[X] = cPos[X] - CENTER_X;
+	  cPos[X] = CENTER_X;
+	}
       }
-      else if(cPos[X] + CHARACTER_SIZE > GAME_WIDTH) {
-        d[X] = 0;
-        cPos[X] = GAME_WIDTH - CHARACTER_SIZE;
+      else { //moving right
+        if(cPos[X] + CHARACTER_SIZE > GAME_WIDTH) {
+          d[X] = 0;
+          cPos[X] = GAME_WIDTH - CHARACTER_SIZE;
+        }
+	else if(curOrigin[X] === 0 && cPos[X] > CENTER_X) {
+	  d[X] = CENTER_X - cPos[X];
+	  cPos[X] = CENTER_X;
+	}
       }
     }
     //see if we should move the character y position
     if(d[Y] !== 0 && shouldMoveCharacterY(d[Y])) {
-      console.log("move character y");
       cPos[Y] += d[Y];
-      if(cPos[Y] < 0) {
-        d[Y] = cPos[Y];
-        cPos[Y] = 0;
+      if(d[Y] < 0) { //moving up
+        if(cPos[Y] < 0) {
+          d[Y] = 0;
+          cPos[Y] = 0;
+        }
+	else if(curOrigin[Y] !== 0 && cPos[Y] < CENTER_Y) {
+	  d[Y] = CENTER_Y - cPos[Y];
+	  cPos[Y] = CENTER_Y;
+	}
       }
-      else if(cPos[Y] + CHARACTER_SIZE > GAME_HEIGHT) {
-        d[Y] = 0;
-        cPos[Y] = GAME_HEIGHT - CHARACTER_SIZE;
+      else { //moving down
+        if(cPos[Y] + CHARACTER_SIZE > GAME_HEIGHT) {
+          d[Y] = 0;
+          cPos[Y] = GAME_HEIGHT - CHARACTER_SIZE;
+        }
+	else if(curOrigin[Y] === 0 && cPos[Y] > CENTER_Y){
+	 d[Y] = cPos[Y] - CENTER_Y;
+	 cPos[Y] = CENTER_Y;
+	}
       }
     }
   }
   function shouldMoveOriginX(dx) {
-    //moving left
-    if(dx < 0) {
-      return cPos[X] === CENTER_X;
-    }
-    //moving right
-    if(dx > 0) {
-      return cPos[X] === CENTER_X;
-    }
-    return false;
+    return cPos[X] === CENTER_X;
   }
   function shouldMoveOriginY(dy) {
-    //moving up
-    if(dy < 0) {
-      return cPos[Y] === CENTER_Y;
-    }
-    //moving down
-    if(dy > 0) {
-      return cPos[Y] === CENTER_Y;
-    }
-    return false;
+    return cPos[Y] === CENTER_Y;
   }
   function shouldMoveCharacterX(dx) {
     //moving left
@@ -375,7 +382,7 @@
     //moving down
     if(dy > 0) {
       //move if we are 
-      return ( curOrigin[Y] + GAME_HEIGHT === MAP_HEIGHT-1 && cPos[Y] + CHARACTER_SIZE <= GAME_HEIGHT ) ||
+      return ( curOrigin[Y] + GAME_HEIGHT === MAP_HEIGHT && cPos[Y] + CHARACTER_SIZE < GAME_HEIGHT ) ||
              ( curOrigin[Y] === 0 && cPos[Y] < CENTER_Y );
     }
     return false;
