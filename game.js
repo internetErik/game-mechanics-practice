@@ -139,7 +139,7 @@
       let bottom = TILE_SIZE*8-offsetY;
       let right  = TILE_SIZE*12-offsetX;
       //draw the left and right borders
-      for(y = initY, py = 0; y <= boundY; y++, py++){
+      for(y = initY, py = 0; y < boundY; y++, py++){
         posY = (TILE_SIZE*py)-offsetY;
         ctx.fillStyle = map[y][initX];
         ctx.fillRect(0, posY, TILE_SIZE-offsetX, TILE_SIZE);
@@ -161,7 +161,7 @@
       let bottom = TILE_SIZE*8-offsetY;
       let right  = TILE_SIZE*12-offsetX;
       //draw the top and bottom borders
-      for(x = initX, px = 0; x <= boundX; x++, px++){
+      for(x = initX, px = 0; x < boundX; x++, px++){
         posX = (TILE_SIZE*px)-offsetX;
         if(x === initX) {
           ctx.fillStyle = map[initY][x];
@@ -196,9 +196,9 @@
   ///////////////////////
   //walk stuff
   var SPEEDUP_INTERVAL = 20;
-  var SLOWDOWN_INTERVAL = 50;
+  var SLOWDOWN_INTERVAL = 10;
   var INITIAL_SPEED = 0;
-  var MAX_SPEED = 4;
+  var MAX_SPEED = 3;
   var DIRECTIONS = {
     'up':    0,
     'down':  1,
