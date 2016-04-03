@@ -278,7 +278,6 @@
     //see if we should move the x origin
     if(d[X] !== 0 && shouldMoveOriginX(d[X])) {
       //move origin x, then figure out if we moved too far 
-      console.log("move origin x");
       curOrigin[X] += d[X];
       if(curOrigin[X] < 0) {
         d[X] = curOrigin[X];
@@ -292,7 +291,6 @@
     //see if we should move the y origin
     if(d[Y] !== 0 && shouldMoveOriginY(d[Y])) {
       //move origin y, then figure out if we moved too far
-      console.log("move origin y");
       curOrigin[Y] += d[Y];
       if(curOrigin[Y] < 0) {
         d[Y] = curOrigin[Y];
