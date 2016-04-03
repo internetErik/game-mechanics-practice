@@ -1,3 +1,4 @@
+'use strict';
 (function() {
   //canvas from dom
   var canvas = document.getElementById('game');
@@ -10,8 +11,8 @@
   var CENTER_Y       = (GAME_HEIGHT/2)-(CHARACTER_SIZE/2);
   console.log(`Center is ${CENTER_X}x${CENTER_Y}`)
   var TILE_SIZE      = 50;
-  var MAP_WIDTH      = map[0].length * TILE_SIZE;
-  var MAP_HEIGHT     = map.length * TILE_SIZE;
+  var MAP_WIDTH      = map[GROUND][0].length * TILE_SIZE;
+  var MAP_HEIGHT     = map[GROUND].length * TILE_SIZE;
   //Constants for sementic access of position arrays
   var X = 0, Y = 1, WIDTH = 2, HEIGHT = 3;
   //definitions of some characters to render
@@ -48,17 +49,20 @@
     }
   }
   function render() {
-    renderGround();
+    renderMap(map[GROUND]);
+    //render character
+    ctx.fillStyle = characterFill;
+    ctx.fillRect.apply(ctx, cPos);
+    //render rest of map
+    for(let i = 1; i < map.length; i++)
+      renderMap(map[i]);
     //render information
     ctx.fillStyle = hudFill;
     ctx.font = "18px Arial";
     ctx.fillText("Facing: " + DIRECTIONS[isFacing], 10, 20);
     ctx.fillText("Speed: " + speed, 10, 40);
-    //render character
-    ctx.fillStyle = characterFill;
-    ctx.fillRect.apply(ctx, cPos);
   }
-  function renderGround() {
+  function renderMap(map) {
     //define vars to iterate on, we may use them twice
     var x = 0, y = 0, px = 0, py = 0;
     //get the coordinates to start with in rendering the map
@@ -82,10 +86,12 @@
       //12x8
       for(x = initX,px = 0; x < boundX; x++, px++) {
         for(y = initY,py = 0; y < boundY; y++, py++) {
-          posX = (px*TILE_SIZE)-offsetX;
-          posY = (py*TILE_SIZE)-offsetY; 
-          ctx.fillStyle = map[y][x];
-          ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          if(map[y][x]) {
+            posX = (px*TILE_SIZE)-offsetX;
+            posY = (py*TILE_SIZE)-offsetY;
+            ctx.fillStyle = map[y][x];
+            ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          }
         }
       }
     }
@@ -97,40 +103,60 @@
       //draw the left and right borders
       for(y = initY, py = 0; y <= boundY; y++, py++){
         posY = (TILE_SIZE*py)-offsetY;
+        if(!map[y][initX] || !map[y][boundX])
+          continue;
         if(y === initY) {
-          ctx.fillStyle = map[y][initX];
-          ctx.fillRect(0, 0, TILE_SIZE-offsetX, TILE_SIZE-offsetY);
-          ctx.fillStyle = map[y][boundX];
-          ctx.fillRect(right, 0, offsetX, TILE_SIZE-offsetY);
+          if(map[y][initX]) {
+            ctx.fillStyle = map[y][initX];
+            ctx.fillRect(0, 0, TILE_SIZE-offsetX, TILE_SIZE-offsetY);
+          }
+          if(map[y][boundX]) {
+            ctx.fillStyle = map[y][boundX];
+            ctx.fillRect(right, 0, offsetX, TILE_SIZE-offsetY);
+          }
         }
         else if(y === boundY) {
-          ctx.fillStyle = map[y][initX];
-          ctx.fillRect(0, bottom, TILE_SIZE-offsetX, offsetY);
-          ctx.fillStyle = map[y][boundX];
-          ctx.fillRect(right, bottom, offsetX, offsetY)
+          if(map[y][initX]) {
+            ctx.fillStyle = map[y][initX];
+            ctx.fillRect(0, bottom, TILE_SIZE-offsetX, offsetY);
+          }
+          if(map[y][boundX]) {
+            ctx.fillStyle = map[y][boundX];
+            ctx.fillRect(right, bottom, offsetX, offsetY);
+          }
         }
         else {
-          ctx.fillStyle = map[y][initX];
-          ctx.fillRect(0, posY, TILE_SIZE-offsetX, 50);
-          ctx.fillStyle = map[y][boundX];
-          ctx.fillRect(right, posY, offsetX, 50);
+          if(map[y][initX]) {
+            ctx.fillStyle = map[y][initX];
+            ctx.fillRect(0, posY, TILE_SIZE-offsetX, 50);
+          }
+          if(map[y][boundX]) {
+            ctx.fillStyle = map[y][boundX];
+            ctx.fillRect(right, posY, offsetX, 50);
+          }
         }
       }
       //draw the top and bottom borders (sans first column)
       for(x = initX+1, px = 1; x < boundX; x++,px++) {
         posX = (TILE_SIZE*px)-offsetX;
-        ctx.fillStyle = map[initY][x];
-        ctx.fillRect(posX, 0, TILE_SIZE, TILE_SIZE-offsetY);
-        ctx.fillStyle = map[boundY][x];
-        ctx.fillRect(posX, bottom, 50, offsetY);
+        if(map[initY][x]) {
+          ctx.fillStyle = map[initY][x];
+          ctx.fillRect(posX, 0, TILE_SIZE, TILE_SIZE-offsetY);
+        }
+        if(map[boundY][x]) {
+          ctx.fillStyle = map[boundY][x];
+          ctx.fillRect(posX, bottom, 50, offsetY);
+        }
       }
       //draw the middle
       for(x = initX+1,px = 1; x < boundX; x++, px++) {
         for(y = initY+1,py = 1; y < boundY; y++, py++) {
-          posX = (px*TILE_SIZE)-offsetX;
-          posY = (py*TILE_SIZE)-offsetY; 
-          ctx.fillStyle = map[y][x];
-          ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          if(map[y][x]) {
+            posX = (px*TILE_SIZE)-offsetX;
+            posY = (py*TILE_SIZE)-offsetY; 
+            ctx.fillStyle = map[y][x];
+            ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          }
         }
       }
     }
@@ -141,18 +167,24 @@
       //draw the left and right borders
       for(y = initY, py = 0; y < boundY; y++, py++){
         posY = (TILE_SIZE*py)-offsetY;
-        ctx.fillStyle = map[y][initX];
-        ctx.fillRect(0, posY, TILE_SIZE-offsetX, TILE_SIZE);
-        ctx.fillStyle = map[y][boundX];
-        ctx.fillRect(right, posY, offsetX, TILE_SIZE);
+        if(map[y][initX]) {
+          ctx.fillStyle = map[y][initX];
+          ctx.fillRect(0, posY, TILE_SIZE-offsetX, TILE_SIZE);
+        }
+        if(map[y][boundX]) {
+          ctx.fillStyle = map[y][boundX];
+          ctx.fillRect(right, posY, offsetX, TILE_SIZE);
+        }
       }
       //draw the middle
       for(x = initX+1,px = 1; x < boundX; x++, px++) {
         for(y = initY,py = 0; y < boundY; y++, py++) {
-          posX = (px*TILE_SIZE)-offsetX;
-          posY = (py*TILE_SIZE)-offsetY; 
-          ctx.fillStyle = map[y][x];
-          ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          if(map[y][x]) {
+            posX = (px*TILE_SIZE)-offsetX;
+            posY = (py*TILE_SIZE)-offsetY; 
+            ctx.fillStyle = map[y][x];
+            ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          }
         }
       }
     }
@@ -162,33 +194,49 @@
       let right  = TILE_SIZE*12-offsetX;
       //draw the top and bottom borders
       for(x = initX, px = 0; x < boundX; x++, px++){
+        if(!map[initY][x] || !map[boundY][x])
+          continue;
         posX = (TILE_SIZE*px)-offsetX;
         if(x === initX) {
-          ctx.fillStyle = map[initY][x];
-          ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE-offsetY);
-          ctx.fillStyle = map[boundY][x];
-          ctx.fillRect(0, bottom, TILE_SIZE, offsetY);
+          if(map[initY][x]) {
+            ctx.fillStyle = map[initY][x];
+            ctx.fillRect(0, 0, TILE_SIZE, TILE_SIZE-offsetY);
+          }
+          if(map[boundY][x]) {
+            ctx.fillStyle = map[boundY][x];
+            ctx.fillRect(0, bottom, TILE_SIZE, offsetY);
+          }
         }
         else if(x === boundX) {
-          ctx.fillStyle = map[initY][x];
-          ctx.fillRect(right, 0, TILE_SIZE, TILE_SIZE-offsetY);
-          ctx.fillStyle = map[boundY][x];
-          ctx.fillRect(right, bottom, TILE_SIZE, offsetY)
+          if(map[initY][x]) {
+            ctx.fillStyle = map[initY][x];
+            ctx.fillRect(right, 0, TILE_SIZE, TILE_SIZE-offsetY);
+          }
+          if(map[boundY][x]) {
+            ctx.fillStyle = map[boundY][x];
+            ctx.fillRect(right, bottom, TILE_SIZE, offsetY);
+          }
         }
         else {
-          ctx.fillStyle = map[initY][x];
-          ctx.fillRect(posX, 0, TILE_SIZE, TILE_SIZE-offsetY);
-          ctx.fillStyle = map[boundY][x];
-          ctx.fillRect(posX, bottom, TILE_SIZE, offsetY);
+          if(map[initY][x]) {
+            ctx.fillStyle = map[initY][x];
+            ctx.fillRect(posX, 0, TILE_SIZE, TILE_SIZE-offsetY);
+          }
+          if(map[boundY][x]) {
+            ctx.fillStyle = map[boundY][x];
+            ctx.fillRect(posX, bottom, TILE_SIZE, offsetY);
+          }
         }
       }
       //draw the middle
       for(x = initX,px = 0; x < boundX; x++, px++) {
         for(y = initY+1,py = 1; y < boundY; y++, py++) {
-          posX = (px*TILE_SIZE)-offsetX;
-          posY = (py*TILE_SIZE)-offsetY; 
-          ctx.fillStyle = map[y][x];
-          ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          if(map[y][x]) {
+            posX = (px*TILE_SIZE)-offsetX;
+            posY = (py*TILE_SIZE)-offsetY; 
+            ctx.fillStyle = map[y][x];
+            ctx.fillRect(posX, posY, TILE_SIZE, TILE_SIZE);
+          }
         }
       }
     }
