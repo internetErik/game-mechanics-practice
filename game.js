@@ -243,7 +243,7 @@
   }
   ///////////////////////
   //walk stuff
-  var SPEEDUP_INTERVAL = 20;
+  var SPEEDUP_INTERVAL = 50;
   var SLOWDOWN_INTERVAL = 10;
   var INITIAL_SPEED = 0;
   var MAX_SPEED = 3;
