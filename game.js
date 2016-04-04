@@ -323,6 +323,8 @@
   function changePosition(/*ref*/d, callCount) {
     //make sure we have a call count
     if(typeof callCount === 'undefined') callCount = 0;
+    //see if we are going to talk into a solid object and limit the change
+    checkForObstructions(/*ref*/d); //'d' IS PASSED BY REF AND UPDATED!
     //see if we can cancel out some of the d values
     if(( d[X] < 0 && cPos[X] === 0 ) ||
        ( d[X] > 0 && cPos[X] === (GAME_WIDTH - CHARACTER_SIZE) )) 
@@ -339,6 +341,22 @@
     //keep calling until we have finished moving or if we have called more than 3 times
     if(( d[X] !== 0 || d[Y] !== 0 ) && callCount < 3)
       changePosition(/*ref*/d, callCount+1);
+  }
+  function checkForObstructions(/*ref*/d) {
+    //loops inrement change values until they aren't hitting anything
+    //check for obstructions on x-axis
+    if(d[X] > 0)
+      for(;!obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]--);
+    else if(d[X] < 0)
+      for(;!obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]++);
+    //check for obstructions on y-axis
+    if(d[Y] > 0)
+      for(;!obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]--);
+    else if(d[Y] < 0)
+      for(;!obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]++);
+  }
+  function obstructed(pos) {
+    return !hitDetect(pos, [274,274,50,50]);
   }
   function changeOriginPosition(/*ref*/d) {
     //see if we should move the x origin
