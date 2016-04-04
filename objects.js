@@ -6,11 +6,6 @@ var stationary = [];
       console.log("Please call StationaryObject with 'new'! returning void");
       return;
     }
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    this.pos = [x, y, width, height];
   }
-
-
 })();

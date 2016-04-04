@@ -247,6 +247,7 @@
   var SLOWDOWN_INTERVAL = 10;
   var INITIAL_SPEED = 0;
   var MAX_SPEED = 3;
+  //hand rolled enum of directions
   var DIRECTIONS = {
     'up':    0,
     'down':  1,
@@ -271,10 +272,10 @@
     setDirection();
   }
   function setDirection() {
-    if(isPressed('up'))    isFacing = DIRECTIONS['up'];
-    if(isPressed('down'))  isFacing = DIRECTIONS['down'];
-    if(isPressed('left'))  isFacing = DIRECTIONS['left'];
-    if(isPressed('right')) isFacing = DIRECTIONS['right'];
+    if(isPressed('up'))    isFacing = DIRECTIONS.up;
+    if(isPressed('down'))  isFacing = DIRECTIONS.down;
+    if(isPressed('left'))  isFacing = DIRECTIONS.left;
+    if(isPressed('right')) isFacing = DIRECTIONS.right;
   }
   function directionChanged() {
     var direction = isFacing;
@@ -297,10 +298,10 @@
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
-    if(isFacing === DIRECTIONS['up']) d[Y] -= speed;
-    else if(isFacing === DIRECTIONS['down']) d[Y] += speed;
-    else if(isFacing === DIRECTIONS['left']) d[X] -= speed;
-    else if(isFacing === DIRECTIONS['right']) d[X] += speed;
+    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
+    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
+    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
+    else if(isFacing === DIRECTIONS.right) d[X] += speed;
     changePosition(d, 0);
   }
   function decayWalk() {
@@ -314,10 +315,10 @@
       isWalking = false;
       isSlowingDown = false;
     }
-    if(isFacing === DIRECTIONS['up']) d[Y] -= speed;
-    else if(isFacing === DIRECTIONS['down']) d[Y] += speed;
-    else if(isFacing === DIRECTIONS['left']) d[X] -= speed;
-    else if(isFacing === DIRECTIONS['right']) d[X] += speed;
+    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
+    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
+    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
+    else if(isFacing === DIRECTIONS.right) d[X] += speed;
     changePosition(d, 0);
   }
   function changePosition(/*ref*/d, callCount) {
