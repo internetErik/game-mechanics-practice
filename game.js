@@ -49,18 +49,54 @@
     }
   }
   function render() {
-    renderMap(map[GROUND]);
-    //render character
-    ctx.fillStyle = characterFill;
-    ctx.fillRect.apply(ctx, cPos);
-    //render rest of map
-    for(let i = 1; i < map.length; i++)
+    for(let i = 0; i < map.length; i++) {
+      //render character
+      if(i === 1) {
+        ctx.fillStyle = characterFill;
+        ctx.fillRect.apply(ctx, cPos);
+      }
+      //render stationary objects
+      renderStationary(i);
+      //render rest of map
       renderMap(map[i]);
+    }
     //render information
     ctx.fillStyle = hudFill;
     ctx.font = "18px Arial";
     ctx.fillText("Facing: " + DIRECTIONS[isFacing], 10, 20);
     ctx.fillText("Speed: " + speed, 10, 40);
+  }
+  function renderStationary(level) {
+    //loop through stationary objects
+    for(var i = stationary.length-1; i >= 0; i--) {
+      //first see if object is within view at all
+      if(objectInView(stationary[i])) {
+        //find where to render it
+        let x = stationary[i].pos[X] - curOrigin[X], //may be negative
+            y = stationary[i].pos[Y] - curOrigin[Y], //may be negative
+            w = stationary[i].pos[WIDTH],
+            h = stationary[i].pos[HEIGHT];
+        ctx.fillStyle = stationary[i].color;
+        ctx.fillRect(x, y, w, h);
+      }
+    }
+  }
+  function objectInView(obj) {
+    //shorter vars for the various heights and widths of object and origin
+    var x = obj.pos[X], xw = obj.pos[X] + obj.pos[WIDTH],
+        y = obj.pos[Y], yh = obj.pos[Y] + obj.pos[HEIGHT],
+        ox = curOrigin[X], oxw = curOrigin[X] + GAME_WIDTH,
+        oy = curOrigin[Y], oyh = curOrigin[Y] + GAME_HEIGHT;
+    //check coreners object against the current origin
+    if(xw > ox && xw < oxw && yh > oy && yh < oyh) //top left
+      return true;
+    if(x > ox && x < oxw && yh > oy && yh < oyh)//top right
+      return true;
+    if(x > ox && x < oxw && y > oy && y < oyh) //bottom right
+      return true;
+    if(xw > ox && xw > oxw && y > oy && y < oyh) //bottom left
+      return true;
+    return false;
   }
   function renderMap(map) {
     //define vars to iterate on, we may use them twice
@@ -324,8 +360,6 @@
   function changePosition(/*ref*/d, callCount) {
     //make sure we have a call count
     if(typeof callCount === 'undefined') callCount = 0;
-    //see if we are going to talk into a solid object and limit the change
-    checkForObstructions(/*ref*/d); //'d' IS PASSED BY REF AND UPDATED!
     //see if we can cancel out some of the d values
     if(( d[X] < 0 && cPos[X] === 0 ) ||
        ( d[X] > 0 && cPos[X] === (GAME_WIDTH - CHARACTER_SIZE) )) 
@@ -333,6 +367,8 @@
     if(( d[Y] < 0 && cPos[Y] === 0 ) ||
        ( d[Y] > 0 && cPos[Y] === (GAME_HEIGHT - CHARACTER_SIZE) )) 
       d[Y] = 0;
+    //see if we are going to talk into a solid object and limit the change
+    checkForObstructions(/*ref*/d); //'d' IS PASSED BY REF AND UPDATED!
     //try to move the origin
     if(d[X] !== 0 || d[Y] !== 0)
       changeOriginPosition(/*ref*/d); //'d' IS PASSED BY REF AND UPDATED!
