@@ -1,7 +1,7 @@
 var stationary = [];
 
 (function() {
-  function StationaryObject(x, y, width, height, color, renderLevel) {
+  function StationaryObject(x, y, width, height, color, renderLevel, map) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning void");
       return;
@@ -10,7 +10,14 @@ var stationary = [];
     this.pos = [x, y, width, height];
     this.color = color;
     this.renderLevel = renderLevel;
+    this.map = map;
+  }
+
+  StationaryObject.prototype.transformPos = function transformPos(curOrigin) {
+    var ox = curOrigin[0], oy = curOrigin[1];
+    return [this.pos[0] - ox, this.pos[1] - oy, this.pos[2], this.pos[3]];
   }
 
   stationary.push(new StationaryObject(1000, 1000, 200, 200, "#000", 1));
+  stationary.push(new StationaryObject(1500, 1000, 200, 200, "#f00", 1));
 })();

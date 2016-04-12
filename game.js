@@ -18,6 +18,7 @@
   //definitions of some characters to render
   var clearPosition = [0, 0, GAME_WIDTH, GAME_HEIGHT];
   var cPos = [CENTER_X, CENTER_Y, CHARACTER_SIZE, CHARACTER_SIZE]; //x, y, w, h
+  var cLevel = 1;
   var hudFill = "#000000";
   var characterFill = "#ff0000";
   //information about what part of the map to render
@@ -383,17 +384,23 @@
     //loops inrement change values until they aren't hitting anything
     //check for obstructions on x-axis
     if(d[X] > 0)
-      for(;!obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]--);
+      for(;obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]--);
     else if(d[X] < 0)
-      for(;!obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]++);
+      for(;obstructed([cPos[X]+d[X], cPos[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[X] !== 0; d[X]++);
     //check for obstructions on y-axis
     if(d[Y] > 0)
-      for(;!obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]--);
+      for(;obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]--);
     else if(d[Y] < 0)
-      for(;!obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]++);
+      for(;obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]++);
   }
   function obstructed(pos) {
-    return !hitDetect(pos, [274,274,50,50]);
+    for(let i = stationary.length-1; i >= 0; i--) {
+      if(cLevel === stationary[i].renderLevel && objectInView(stationary[i])) {
+        if(hitDetect(pos, stationary[i].transformPos(curOrigin)))
+          return true;
+      }
+    }
+    return false;
   }
   function changeOriginPosition(/*ref*/d) {
     //see if we should move the x origin
