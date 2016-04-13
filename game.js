@@ -89,13 +89,13 @@
         ox = curOrigin[X], oxw = curOrigin[X] + GAME_WIDTH,
         oy = curOrigin[Y], oyh = curOrigin[Y] + GAME_HEIGHT;
     //check coreners object against the current origin
-    if(xw > ox && xw < oxw && yh > oy && yh < oyh) //top left
+    if(x  > ox && x  < oxw && y  > oy && y  < oyh) //top left
       return true;
-    if(x > ox && x < oxw && yh > oy && yh < oyh)//top right
+    if(xw > ox && xw < oxw && y  > oy && y  < oyh)//top right
       return true;
-    if(x > ox && x < oxw && y > oy && y < oyh) //bottom right
+    if(xw > ox && xw < oxw && yh > oy && yh < oyh) //bottom right
       return true;
-    if(xw > ox && xw > oxw && y > oy && y < oyh) //bottom left
+    if(x  > ox && x  < oxw && yh > oy && yh < oyh) //bottom left
       return true;
     return false;
   }
