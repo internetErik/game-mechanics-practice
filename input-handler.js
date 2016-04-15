@@ -5,13 +5,13 @@ var keys = {
   '39': false, //right
   '40': false, //down
   '32': false, //space
-};
-var keyMap = {
+  '16': false,  //shift
   'left' : 37,
   'up'   : 38,
   'right': 39,
   'down' : 40,
-  'space': 32
+  'space': 32,
+  'shift': 16
 }
 var subscriptions = {};
 //we pressed a button
@@ -29,10 +29,10 @@ document.addEventListener('keyup', function(e){
   if(keys[keyCode] !== undefined)
     keys[keyCode] = false;
 });
-function isPressed(key){
+function isPressed(key) { //values could be 'space', 'up', 'down', 'shift'
   if(key === 'DIRECTIONAL')
     return isPressed('up') || isPressed('down') || isPressed('left') || isPressed('right');
-  return keys[keyMap[key]];
+  return keys[keys[key]];
 }
 function subscribeToKeyPress(key, fn) {
   if(subscriptions[key]) subscriptions[key].push(fn);

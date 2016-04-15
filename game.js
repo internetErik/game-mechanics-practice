@@ -45,8 +45,12 @@
       walk();
     }
     else if(isWalking) {
-      if(!isSlowingDown) isSlowingDown = true;
-      decayWalk();
+      if(!isSlowingDown) { 
+        isSlowingDown = true; 
+        decayWalk(true); //first call, in case we want to just walk forward 1 space
+      }
+      else
+        decayWalk(false); //not first call
     }
   }
   function render() {
@@ -341,7 +345,8 @@
     else if(isFacing === DIRECTIONS.right) d[X] += speed;
     changePosition(d, 0);
   }
-  function decayWalk() {
+  function decayWalk(firstCall) {
+    var singleStep = false;
     var d = [0,0];
     if(speed > 0) {
       walkingTime--;
@@ -352,11 +357,16 @@
       isWalking = false;
       isSlowingDown = false;
     }
+    if(firstCall && speed === 0) { 
+      singleStep = true;
+      speed = 1;
+    }
     if(isFacing === DIRECTIONS.up) d[Y] -= speed;
     else if(isFacing === DIRECTIONS.down) d[Y] += speed;
     else if(isFacing === DIRECTIONS.left) d[X] -= speed;
     else if(isFacing === DIRECTIONS.right) d[X] += speed;
     changePosition(d, 0);
+    if(singleStep) speed = 0;
   }
   function changePosition(/*ref*/d, callCount) {
     //make sure we have a call count

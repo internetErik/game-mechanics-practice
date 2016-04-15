@@ -18,6 +18,6 @@ var stationary = [];
     return [this.pos[0] - ox, this.pos[1] - oy, this.pos[2], this.pos[3]];
   }
 
-  stationary.push(new StationaryObject(1000, 1000, 200, 200, "#000", 1));
-  stationary.push(new StationaryObject(1500, 1000, 200, 200, "#f00", 1));
+  stationary.push(new StationaryObject(1000, 1000, 200, 200, "#f60", 1));
+  stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1));
 })();
