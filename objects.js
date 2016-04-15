@@ -19,5 +19,5 @@ var stationary = [];
   }
 
   stationary.push(new StationaryObject(1000, 1000, 200, 200, "#f60", 1));
-  stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1));
+  stationary.push(new StationaryObject(1260, 1000, 200, 200, "#f60", 1));
 })();

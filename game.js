@@ -42,7 +42,10 @@
     //handle walking inputs
     if(isPressed('DIRECTIONAL')) {
       if(!isWalking) startWalking();
-      walk();
+      if(isPressed('shift')) 
+        slowWalk();
+      else 
+        walk();
     }
     else if(isWalking) {
       if(!isSlowingDown) { 
@@ -288,6 +291,7 @@
   var SLOWDOWN_INTERVAL = 10;
   var INITIAL_SPEED = 0;
   var MAX_SPEED = 3;
+  var MAX_SLOWWALK_SPEED = 1;
   //hand rolled enum of directions
   var DIRECTIONS = {
     'up':    0,
@@ -335,6 +339,25 @@
       return;
     }
     if(speed < MAX_SPEED) {
+      walkingTime++;
+      if(walkingTime % SPEEDUP_INTERVAL === 0) 
+        speed++;
+    }
+    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
+    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
+    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
+    else if(isFacing === DIRECTIONS.right) d[X] += speed;
+    changePosition(d, 0);
+  }
+  function slowWalk() {
+    var d = [0,0];
+    if(directionChanged()) {
+      decayWalk();
+      return;
+    }
+    if(speed > MAX_SLOWWALK_SPEED) 
+      speed = MAX_SLOWWALK_SPEED;
+    else if(speed < MAX_SLOWWALK_SPEED) {
       walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
