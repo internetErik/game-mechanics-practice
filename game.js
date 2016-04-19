@@ -294,14 +294,22 @@
   var MAX_SLOWWALK_SPEED = 1;
   //hand rolled enum of directions
   var DIRECTIONS = {
-    'up':    0,
-    'down':  1,
-    'left':  2,
-    'right': 3,
-    '0':     'up',
-    '1':     'down',
-    '2':     'left',
-    '3':     'right'
+    'up':         0,
+    'down':       1,
+    'left':       2,
+    'right':      3,
+    'upRight':   4,
+    'upLeft':    5,
+    'downRight': 6,
+    'downLeft':  7,
+    '0':         'up',
+    '1':         'down',
+    '2':         'left',
+    '3':         'right',
+    '4':         'upRight',
+    '5':         'upLeft',
+    '6':         'downRight',
+    '7':         'downLeft',
   }
   var isFacing = 3;
   var lastDirection = -1;
@@ -317,10 +325,18 @@
     setDirection();
   }
   function setDirection() {
-    if(isPressed('up'))    isFacing = DIRECTIONS.up;
-    if(isPressed('down'))  isFacing = DIRECTIONS.down;
-    if(isPressed('left'))  isFacing = DIRECTIONS.left;
-    if(isPressed('right')) isFacing = DIRECTIONS.right;
+    if(directionsPressed() === 1) {
+      if(isPressed('up'))         isFacing = DIRECTIONS.up;
+      else if(isPressed('down'))  isFacing = DIRECTIONS.down;
+      else if(isPressed('left'))  isFacing = DIRECTIONS.left;
+      else if(isPressed('right')) isFacing = DIRECTIONS.right;
+    }
+    else {
+      if(isPressed('up') && isPressed('right'))   isFacing = DIRECTIONS.upRight;
+      else if(isPressed('up') && isPressed('left'))    isFacing = DIRECTIONS.upLeft;
+      else if(isPressed('down') && isPressed('right')) isFacing = DIRECTIONS.downRight;
+      else if(isPressed('down') && isPressed('left'))  isFacing = DIRECTIONS.downLeft;
+    }
   }
   function directionChanged() {
     var direction = isFacing;
@@ -343,10 +359,26 @@
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
-    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
-    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
-    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
+    if(isFacing === DIRECTIONS.up) d[Y]         -= speed;
+    else if(isFacing === DIRECTIONS.down) d[Y]  += speed;
+    else if(isFacing === DIRECTIONS.left) d[X]  -= speed;
     else if(isFacing === DIRECTIONS.right) d[X] += speed;
+    else if(isFacing === DIRECTIONS.upRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.upLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
     changePosition(d, 0);
   }
   function slowWalk() {

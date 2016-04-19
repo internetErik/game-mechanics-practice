@@ -34,6 +34,9 @@ function isPressed(key) { //values could be 'space', 'up', 'down', 'shift'
     return isPressed('up') || isPressed('down') || isPressed('left') || isPressed('right');
   return keys[keys[key]];
 }
+function directionsPressed() {
+  return isPressed('up') + isPressed('down') + isPressed('left') + isPressed('right');
+}
 function subscribeToKeyPress(key, fn) {
   if(subscriptions[key]) subscriptions[key].push(fn);
   else subscriptions[key] = [fn];
