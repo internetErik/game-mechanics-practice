@@ -398,6 +398,22 @@
     else if(isFacing === DIRECTIONS.down) d[Y] += speed;
     else if(isFacing === DIRECTIONS.left) d[X] -= speed;
     else if(isFacing === DIRECTIONS.right) d[X] += speed;
+    else if(isFacing === DIRECTIONS.upRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.upLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
     changePosition(d, 0);
   }
   function decayWalk(firstCall) {
@@ -420,6 +436,22 @@
     else if(isFacing === DIRECTIONS.down) d[Y] += speed;
     else if(isFacing === DIRECTIONS.left) d[X] -= speed;
     else if(isFacing === DIRECTIONS.right) d[X] += speed;
+    else if(isFacing === DIRECTIONS.upRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.upLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] -= Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
+    else if(isFacing === DIRECTIONS.downLeft) {
+      d[X] -= Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
     changePosition(d, 0);
     if(singleStep) speed = 0;
   }
