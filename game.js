@@ -2,7 +2,7 @@
 (function() {
   function gameLoop() {
     clearFrame();
-    handleInputUpdates();
+    characterUpdatePhase();
     render();
   }    
   var interval = setInterval(gameLoop.bind(this), 0);  

@@ -1,7 +1,7 @@
 'use strict';
 //functions in global scope
 var getCharState;
-var handleInputUpdates;
+var characterUpdatePhase;
 (function(){
   ///////////////////////
   //walk stuff
@@ -15,7 +15,7 @@ var handleInputUpdates;
   const WEAR_SPEED_THRESHOLD = 2;
   const STAMINA_LOSS_INTERVAL = 30;
   const STAMINA_GAIN_INTERVAL = 60;
-  const MAX_STAMINA = 10;
+  const MAX_STAMINA = 20;
   const BODY_WEAR_LOSS_INTERVAL = 30;
   const BODY_WEAR_GAIN_INTERVAL = 60;
   const MAX_BODY_WEAR = 10;
@@ -43,6 +43,7 @@ var handleInputUpdates;
   var isWalking = false;
   var isSlowingDown = false;
   var walkingTime = 0;
+  var staminaTime = 0;
   var speed = 0;
   var stamina = MAX_STAMINA;
   var bodyWear = 0;
@@ -58,25 +59,36 @@ var handleInputUpdates;
     }
   }  
   //handle walking inputs
-  handleInputUpdates = function _handleInputUpdates() {
+  characterUpdatePhase = function _characterUpdatePhase() {
     if(isPressed('DIRECTIONAL')) {
       if(!isWalking) startWalking();
-      if(isPressed('backtick'))
+      walkingTime++;
+      if(stamina > 0 && isPressed('backtick'))
         sprint();
+      else if(stamina > 0 && isPressed('ctrl'))
+        run();
       else if(isPressed('shift')) 
         creep();
-      else if(isPressed('ctrl'))
-        run();
       else 
         walk();
     }
     else if(isWalking) {
+      walkingTime--;
       if(!isSlowingDown) { 
         isSlowingDown = true; 
         decayWalk(true); //first call, in case we want to just walk forward 1 space
       }
       else
         decayWalk(false); //not first call
+    }
+    //recover stamina
+    if(stamina < MAX_STAMINA) {
+      if(staminaTime > 2000000) staminaTime = 0;
+      staminaTime++;
+      if(speed <= WEAR_SPEED_THRESHOLD) {
+        if(staminaTime % STAMINA_GAIN_INTERVAL === 0) 
+          stamina++;
+      }
     }
   }
   function startWalking() {
@@ -116,10 +128,11 @@ var handleInputUpdates;
       return;
     }
     if(speed < MAX_WALK_SPEED) {
-      walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
+    else if(speed > MAX_WALK_SPEED) 
+      speed = MAX_WALK_SPEED;
     moveCharacter();
   }
   function run() {
@@ -128,9 +141,15 @@ var handleInputUpdates;
       return;
     }
     if(speed < MAX_RUN_SPEED) {
-      walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
+    }
+    else if(speed > MAX_RUN_SPEED) 
+      speed = MAX_RUN_SPEED;
+    if(speed > WEAR_SPEED_THRESHOLD) {
+      if(stamina > 0 && walkingTime % STAMINA_LOSS_INTERVAL === 0)
+        stamina -= speed;
+      if(stamina < 0) stamina = 0;
     }
     moveCharacter();
   }
@@ -140,9 +159,13 @@ var handleInputUpdates;
       return;
     }
     if(speed < MAX_SPRINT_SPEED) {
-      walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
+    }
+    if(speed > WEAR_SPEED_THRESHOLD) {
+      if(stamina > 0 && walkingTime % STAMINA_LOSS_INTERVAL === 0)
+        stamina -= speed;
+      if(stamina < 0) stamina = 0;
     }
     moveCharacter();
   }
@@ -154,7 +177,6 @@ var handleInputUpdates;
     if(speed > MAX_CREEP_SPEED) 
       speed = MAX_CREEP_SPEED;
     else if(speed < MAX_CREEP_SPEED) {
-      walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
@@ -163,7 +185,6 @@ var handleInputUpdates;
   function decayWalk(firstCall) {
     var singleStep = false;
     if(speed > 0) {
-      walkingTime--;
       if(walkingTime % SLOWDOWN_INTERVAL === 0)
         speed--;
     }
