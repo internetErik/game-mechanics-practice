@@ -20,6 +20,7 @@ var objectInView;
     ctx.font = "18px Arial";
     ctx.fillText("Facing: " + getCharState('currentDirection'), 10, 20);
     ctx.fillText("Speed: " + getCharState('speed'), 10, 40);
+    ctx.fillText("Stamina: " + getCharState('stamina'), 10, 60);
   }
   function renderStationary(level) {
     //loop through stationary objects

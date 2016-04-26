@@ -8,11 +8,17 @@ var handleInputUpdates;
   const SPEEDUP_INTERVAL = 50;
   const SLOWDOWN_INTERVAL = 10;
   const INITIAL_SPEED = 0;
-  const MAX_SPEED = 3;
-  const MAX_SLOWWALK_SPEED = 1;
+  const MAX_CREEP_SPEED = 1;
+  const MAX_WALK_SPEED = 2;
+  const MAX_RUN_SPEED = 3;
+  const MAX_SPRINT_SPEED = 5;
+  const WEAR_SPEED_THRESHOLD = 2;
   const STAMINA_LOSS_INTERVAL = 30;
-  const STAMINA_GAIN_INTERVAL = 50;
+  const STAMINA_GAIN_INTERVAL = 60;
   const MAX_STAMINA = 10;
+  const BODY_WEAR_LOSS_INTERVAL = 30;
+  const BODY_WEAR_GAIN_INTERVAL = 60;
+  const MAX_BODY_WEAR = 10;
   //hand rolled enum of directions
   const DIRECTIONS = {
     'up':        0,
@@ -39,13 +45,15 @@ var handleInputUpdates;
   var walkingTime = 0;
   var speed = 0;
   var stamina = MAX_STAMINA;
+  var bodyWear = 0;
   //function for getting state of character
   getCharState = function _getCharState(property) {
     switch(property) {
-      case 'speed':            return speed;
-      case 'isWalking':        return isWalking;
-      case 'startWalking':     return startWalking;
+      case 'speed'           : return speed;
+      case 'isWalking'       : return isWalking;
+      case 'startWalking'    : return startWalking;
       case 'currentDirection': return DIRECTIONS[isFacing];
+      case 'stamina'         : return stamina;
       default: return null;
     }
   }  
@@ -53,8 +61,12 @@ var handleInputUpdates;
   handleInputUpdates = function _handleInputUpdates() {
     if(isPressed('DIRECTIONAL')) {
       if(!isWalking) startWalking();
-      if(isPressed('shift')) 
-        slowWalk();
+      if(isPressed('backtick'))
+        sprint();
+      else if(isPressed('shift')) 
+        creep();
+      else if(isPressed('ctrl'))
+        run();
       else 
         walk();
     }
@@ -103,21 +115,45 @@ var handleInputUpdates;
       decayWalk();
       return;
     }
-    if(speed < MAX_SPEED) {
+    if(speed < MAX_WALK_SPEED) {
       walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
     moveCharacter();
   }
-  function slowWalk() {
+  function run() {
     if(directionChanged()) {
       decayWalk();
       return;
     }
-    if(speed > MAX_SLOWWALK_SPEED) 
-      speed = MAX_SLOWWALK_SPEED;
-    else if(speed < MAX_SLOWWALK_SPEED) {
+    if(speed < MAX_RUN_SPEED) {
+      walkingTime++;
+      if(walkingTime % SPEEDUP_INTERVAL === 0) 
+        speed++;
+    }
+    moveCharacter();
+  }
+  function sprint() {
+    if(directionChanged()) {
+      decayWalk();
+      return;
+    }
+    if(speed < MAX_SPRINT_SPEED) {
+      walkingTime++;
+      if(walkingTime % SPEEDUP_INTERVAL === 0) 
+        speed++;
+    }
+    moveCharacter();
+  }
+  function creep() {
+    if(directionChanged()) {
+      decayWalk();
+      return;
+    }
+    if(speed > MAX_CREEP_SPEED) 
+      speed = MAX_CREEP_SPEED;
+    else if(speed < MAX_CREEP_SPEED) {
       walkingTime++;
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
