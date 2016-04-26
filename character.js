@@ -63,9 +63,10 @@ var characterUpdatePhase;
     if(isPressed('DIRECTIONAL')) {
       if(!isWalking) startWalking();
       walkingTime++;
+      //cannot sprint without stamina, but you can run, walk or creep
       if(stamina > 0 && isPressed('backtick'))
         sprint();
-      else if(stamina > 0 && isPressed('ctrl'))
+      else if(isPressed('ctrl'))
         run();
       else if(isPressed('shift')) 
         creep();
@@ -82,7 +83,7 @@ var characterUpdatePhase;
         decayWalk(false); //not first call
     }
     //recover stamina
-    if(stamina < MAX_STAMINA) {
+    if(stamina < MAX_STAMINA && speed < WEAR_SPEED_THRESHOLD) {
       if(staminaTime > 2000000) staminaTime = 0;
       staminaTime++;
       if(speed <= WEAR_SPEED_THRESHOLD) {
