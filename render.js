@@ -3,6 +3,8 @@
 var render;
 var objectInView;
 (function(){
+  const TILE_WIDTH  = GAME_WIDTH /  TILE_SIZE;
+  const TILE_HEIGHT = GAME_HEIGHT /  TILE_SIZE;
   render = function _render() {
     for(let i = 0; i < map.length; i++) {
       //render character
@@ -61,8 +63,8 @@ var objectInView;
     var initX = Math.floor(curOrigin[X] / TILE_SIZE);
     var initY = Math.floor(curOrigin[Y] / TILE_SIZE);
     //bound of our render
-    var boundX = initX + 12;
-    var boundY = initY + 8;
+    var boundX = initX + TILE_WIDTH;
+    var boundY = initY + TILE_HEIGHT;
     //get the number of pixels to offset the map, 
      //since the borders of a tile won't always be on the edge
     var offsetX =  curOrigin[X] % TILE_SIZE;
@@ -75,7 +77,7 @@ var objectInView;
     var initY = Math.floor(curOrigin[Y] / TILE_SIZE);
     //depending on how we are algined, we are going to show more or less tiles
     if(offsetX === 0 && offsetY === 0) {
-      //12x8
+      //TILE_WIDTH x TILE_HEIGHT
       for(x = initX,px = 0; x < boundX; x++, px++) {
         for(y = initY,py = 0; y < boundY; y++, py++) {
           if(map[y][x]) {
@@ -90,8 +92,8 @@ var objectInView;
     else if(offsetX !== 0 && offsetY !== 0) {
       //this is the most common case!
       //13x9
-      let bottom = TILE_SIZE*8-offsetY;
-      let right  = TILE_SIZE*12-offsetX;
+      let bottom = TILE_SIZE * TILE_HEIGHT - offsetY;
+      let right  = TILE_SIZE * TILE_WIDTH - offsetX;
       //draw the left and right borders
       for(y = initY, py = 0; y <= boundY; y++, py++){
         posY = (TILE_SIZE*py)-offsetY;
@@ -153,9 +155,9 @@ var objectInView;
       }
     }
     else if(offsetX !== 0) {
-      //13x8
-      let bottom = TILE_SIZE*8-offsetY;
-      let right  = TILE_SIZE*12-offsetX;
+      //TILE_WIDTH+1 x TILE_HEIGHT
+      let bottom = TILE_SIZE * TILE_HEIGHT - offsetY;
+      let right  = TILE_SIZE * TILE_WIDTH - offsetX;
       //draw the left and right borders
       for(y = initY, py = 0; y < boundY; y++, py++){
         posY = (TILE_SIZE*py)-offsetY;
@@ -181,9 +183,9 @@ var objectInView;
       }
     }
     else if(offsetY !== 0) {
-      //12x9
-      let bottom = TILE_SIZE*8-offsetY;
-      let right  = TILE_SIZE*12-offsetX;
+      //TILE_WIDTH x TILE_HEIGHT+1
+      let bottom = TILE_SIZE * TILE_HEIGHT - offsetY;
+      let right  = TILE_SIZE * TILE_WIDTH - offsetX;
       //draw the top and bottom borders
       for(x = initX, px = 0; x < boundX; x++, px++){
         if(!map[initY][x] || !map[boundY][x])
