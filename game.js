@@ -30,7 +30,7 @@
   });
   function gameLoop() {
     clearFrame();
-    moveCharacter();
+    updateCharacterPosition();
     render();
   }    
   function clearFrame() {
@@ -38,7 +38,7 @@
     ctx.fillStyle = "#000000";
     ctx.fillRect.apply(ctx, clearPosition);
   }
-  function moveCharacter() {
+  function updateCharacterPosition() {
     //handle walking inputs
     if(isPressed('DIRECTIONAL')) {
       if(!isWalking) startWalking();
@@ -292,12 +292,15 @@
   var INITIAL_SPEED = 0;
   var MAX_SPEED = 3;
   var MAX_SLOWWALK_SPEED = 1;
+  var STAMINA_LOSS_INTERVAL = 30;
+  var STAMINA_GAIN_INTERVAL = 50;
+  var MAX_STAMINA = 10;
   //hand rolled enum of directions
   var DIRECTIONS = {
-    'up':         0,
-    'down':       1,
-    'left':       2,
-    'right':      3,
+    'up':        0,
+    'down':      1,
+    'left':      2,
+    'right':     3,
     'upRight':   4,
     'upLeft':    5,
     'downRight': 6,
@@ -317,6 +320,7 @@
   var isSlowingDown = false;
   var walkingTime = 0;
   var speed = 0;
+  var stamina = MAX_STAMINA;
   function startWalking() {
     isWalking = true;
     isSlowingDown = false;
@@ -349,7 +353,6 @@
     return false;
   }
   function walk() {
-    var d = [0,0];
     if(directionChanged()) {
       decayWalk();
       return;
@@ -359,30 +362,9 @@
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
-    if(isFacing === DIRECTIONS.up) d[Y]         -= speed;
-    else if(isFacing === DIRECTIONS.down) d[Y]  += speed;
-    else if(isFacing === DIRECTIONS.left) d[X]  -= speed;
-    else if(isFacing === DIRECTIONS.right) d[X] += speed;
-    else if(isFacing === DIRECTIONS.upRight) {
-      d[X] += Math.ceil(speed/2);
-      d[Y] -= Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.upLeft) {
-      d[X] -= Math.ceil(speed/2);
-      d[Y] -= Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.downRight) {
-      d[X] += Math.ceil(speed/2);
-      d[Y] += Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.downLeft) {
-      d[X] -= Math.ceil(speed/2);
-      d[Y] += Math.ceil(speed/2);
-    }
-    changePosition(d, 0);
+    moveCharacter();
   }
   function slowWalk() {
-    var d = [0,0];
     if(directionChanged()) {
       decayWalk();
       return;
@@ -394,31 +376,10 @@
       if(walkingTime % SPEEDUP_INTERVAL === 0) 
         speed++;
     }
-    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
-    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
-    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
-    else if(isFacing === DIRECTIONS.right) d[X] += speed;
-    else if(isFacing === DIRECTIONS.upRight) {
-      d[X] += Math.ceil(speed/2);
-      d[Y] -= Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.upLeft) {
-      d[X] -= Math.ceil(speed/2);
-      d[Y] -= Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.downRight) {
-      d[X] += Math.ceil(speed/2);
-      d[Y] += Math.ceil(speed/2);
-    }
-    else if(isFacing === DIRECTIONS.downLeft) {
-      d[X] -= Math.ceil(speed/2);
-      d[Y] += Math.ceil(speed/2);
-    }
-    changePosition(d, 0);
+    moveCharacter();
   }
   function decayWalk(firstCall) {
     var singleStep = false;
-    var d = [0,0];
     if(speed > 0) {
       walkingTime--;
       if(walkingTime % SLOWDOWN_INTERVAL === 0)
@@ -432,6 +393,11 @@
       singleStep = true;
       speed = 1;
     }
+    moveCharacter();
+    if(singleStep) speed = 0;
+  }
+  function moveCharacter() {
+    var d = [0,0];
     if(isFacing === DIRECTIONS.up) d[Y] -= speed;
     else if(isFacing === DIRECTIONS.down) d[Y] += speed;
     else if(isFacing === DIRECTIONS.left) d[X] -= speed;
@@ -453,7 +419,6 @@
       d[Y] += Math.ceil(speed/2);
     }
     changePosition(d, 0);
-    if(singleStep) speed = 0;
   }
   function changePosition(/*ref*/d, callCount) {
     //make sure we have a call count
