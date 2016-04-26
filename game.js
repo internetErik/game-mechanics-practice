@@ -1,9 +1,5 @@
 'use strict';
 (function() {
-  //register a function to perform on spacebar
-  subscribeToKeyPress('32', function() {
-    console.log("act");
-  });
   function gameLoop() {
     clearFrame();
     handleInputUpdates();
@@ -15,4 +11,8 @@
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   }
+  //register a function to perform on spacebar
+  subscribeToKeyPress('32', function() {
+    console.log("act");
+  });
 })();

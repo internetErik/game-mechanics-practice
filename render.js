@@ -1,3 +1,5 @@
+'use strict';
+//functions in global scope
 var render;
 var objectInView;
 (function(){

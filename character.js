@@ -1,18 +1,20 @@
+'use strict';
+//functions in global scope
 var getCharState;
 var handleInputUpdates;
 (function(){
   ///////////////////////
   //walk stuff
-  var SPEEDUP_INTERVAL = 50;
-  var SLOWDOWN_INTERVAL = 10;
-  var INITIAL_SPEED = 0;
-  var MAX_SPEED = 3;
-  var MAX_SLOWWALK_SPEED = 1;
-  var STAMINA_LOSS_INTERVAL = 30;
-  var STAMINA_GAIN_INTERVAL = 50;
-  var MAX_STAMINA = 10;
+  const SPEEDUP_INTERVAL = 50;
+  const SLOWDOWN_INTERVAL = 10;
+  const INITIAL_SPEED = 0;
+  const MAX_SPEED = 3;
+  const MAX_SLOWWALK_SPEED = 1;
+  const STAMINA_LOSS_INTERVAL = 30;
+  const STAMINA_GAIN_INTERVAL = 50;
+  const MAX_STAMINA = 10;
   //hand rolled enum of directions
-  var DIRECTIONS = {
+  const DIRECTIONS = {
     'up':        0,
     'down':      1,
     'left':      2,
