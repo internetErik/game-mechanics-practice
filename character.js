@@ -113,18 +113,49 @@ var characterUpdatePhase;
       else if(isPressed('down') && isPressed('left'))  isFacing = DIRECTIONS.downLeft;
     }
   }
-  function directionChanged() {
-    var direction = isFacing;
+  function reversedDirection() {
+    var reversed = false;
+    var oldDirection = isFacing;
     setDirection();
-    if(direction !== isFacing) {
-      isFacing = direction; //change facing back
-      isSlowingDown = true;
-      return true;
+    if(oldDirection !== isFacing) {
+      if(DIRECTIONS[oldDirection] === 'up') 
+        reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'upLeft';
+      if(DIRECTIONS[oldDirection] === 'down') 
+        reversed = DIRECTIONS[isFacing] !== 'downRight' && DIRECTIONS[isFacing] !== 'downLeft';
+      if(DIRECTIONS[oldDirection] === 'left') 
+        reversed = DIRECTIONS[isFacing] !== 'upLeft' && DIRECTIONS[isFacing] !== 'downLeft';
+      if(DIRECTIONS[oldDirection] === 'right') 
+        reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'downRight';
+      if(DIRECTIONS[oldDirection] === 'upRight') 
+        reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'right';
+      if(DIRECTIONS[oldDirection] === 'upLeft') 
+        reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'left';
+      if(DIRECTIONS[oldDirection] === 'downRight') 
+        reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'right';
+      if(DIRECTIONS[oldDirection] === 'downLeft') 
+        reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'left';
+      if(reversed) {
+        isFacing = oldDirection; //change facing back so we can slide to a stop
+        isSlowingDown = true;
+      }
     }
-    return false;
+    return reversed;
+  }
+  function creep() {
+    if(reversedDirection()) {
+      decayWalk();
+      return;
+    }
+    if(speed > MAX_CREEP_SPEED) 
+      speed = MAX_CREEP_SPEED;
+    else if(speed < MAX_CREEP_SPEED) {
+      if(walkingTime % SPEEDUP_INTERVAL === 0) 
+        speed++;
+    }
+    moveCharacter();
   }
   function walk() {
-    if(directionChanged()) {
+    if(reversedDirection()) {
       decayWalk();
       return;
     }
@@ -137,7 +168,7 @@ var characterUpdatePhase;
     moveCharacter();
   }
   function run() {
-    if(directionChanged()) {
+    if(reversedDirection()) {
       decayWalk();
       return;
     }
@@ -155,7 +186,7 @@ var characterUpdatePhase;
     moveCharacter();
   }
   function sprint() {
-    if(directionChanged()) {
+    if(reversedDirection()) {
       decayWalk();
       return;
     }
@@ -167,19 +198,6 @@ var characterUpdatePhase;
       if(stamina > 0 && walkingTime % STAMINA_LOSS_INTERVAL === 0)
         stamina -= speed;
       if(stamina < 0) stamina = 0;
-    }
-    moveCharacter();
-  }
-  function creep() {
-    if(directionChanged()) {
-      decayWalk();
-      return;
-    }
-    if(speed > MAX_CREEP_SPEED) 
-      speed = MAX_CREEP_SPEED;
-    else if(speed < MAX_CREEP_SPEED) {
-      if(walkingTime % SPEEDUP_INTERVAL === 0) 
-        speed++;
     }
     moveCharacter();
   }
