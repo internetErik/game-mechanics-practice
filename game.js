@@ -5,7 +5,7 @@
     characterUpdatePhase();
     render();
   }    
-  var interval = setInterval(gameLoop.bind(this), 0);  
+  var interval = setInterval(gameLoop.bind(this), 10);  
   function clearFrame() {
     ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     ctx.fillStyle = "#000000";
