@@ -120,21 +120,21 @@ var characterUpdatePhase;
     if(oldDirection !== isFacing) {
       if(DIRECTIONS[oldDirection] === 'up') 
         reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'upLeft';
-      if(DIRECTIONS[oldDirection] === 'down') 
+      else if(DIRECTIONS[oldDirection] === 'down') 
         reversed = DIRECTIONS[isFacing] !== 'downRight' && DIRECTIONS[isFacing] !== 'downLeft';
-      if(DIRECTIONS[oldDirection] === 'left') 
+      else if(DIRECTIONS[oldDirection] === 'left') 
         reversed = DIRECTIONS[isFacing] !== 'upLeft' && DIRECTIONS[isFacing] !== 'downLeft';
-      if(DIRECTIONS[oldDirection] === 'right') 
+      else if(DIRECTIONS[oldDirection] === 'right') 
         reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'downRight';
-      if(DIRECTIONS[oldDirection] === 'upRight') 
+      else if(DIRECTIONS[oldDirection] === 'upRight') 
         reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'right';
-      if(DIRECTIONS[oldDirection] === 'upLeft') 
+      else if(DIRECTIONS[oldDirection] === 'upLeft') 
         reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'left';
-      if(DIRECTIONS[oldDirection] === 'downRight') 
+      else if(DIRECTIONS[oldDirection] === 'downRight') 
         reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'right';
-      if(DIRECTIONS[oldDirection] === 'downLeft') 
+      else if(DIRECTIONS[oldDirection] === 'downLeft') 
         reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'left';
-      if(reversed) {
+      else if(reversed) {
         isFacing = oldDirection; //change facing back so we can slide to a stop
         isSlowingDown = true;
       }
