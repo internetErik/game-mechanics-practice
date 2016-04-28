@@ -40,7 +40,7 @@ var characterUpdatePhase;
   }
   var isFacing = 3;
   var lastDirection = -1;
-  var isWalking = false;
+  var isMoving = false;
   var isSlowingDown = false;
   var walkingTime = 0;
   var staminaTime = 0;
@@ -51,7 +51,7 @@ var characterUpdatePhase;
   getCharState = function _getCharState(property) {
     switch(property) {
       case 'speed'           : return speed;
-      case 'isWalking'       : return isWalking;
+      case 'isMoving'        : return isMoving;
       case 'startWalking'    : return startWalking;
       case 'currentDirection': return DIRECTIONS[isFacing];
       case 'stamina'         : return stamina;
@@ -61,7 +61,7 @@ var characterUpdatePhase;
   //handle walking inputs
   characterUpdatePhase = function _characterUpdatePhase() {
     if(isPressed('DIRECTIONAL')) {
-      if(!isWalking) startWalking();
+      if(!isMoving) startWalking();
       walkingTime++;
       //cannot sprint without stamina, but you can run, walk or creep
       if(stamina > 0 && isPressed('backtick'))
@@ -73,7 +73,7 @@ var characterUpdatePhase;
       else 
         walk();
     }
-    else if(isWalking) {
+    else if(isMoving) {
       walkingTime--;
       if(!isSlowingDown) { 
         isSlowingDown = true; 
@@ -93,7 +93,7 @@ var characterUpdatePhase;
     }
   }
   function startWalking() {
-    isWalking = true;
+    isMoving = true;
     isSlowingDown = false;
     walkingTime = 0;
     speed = INITIAL_SPEED;
@@ -208,7 +208,7 @@ var characterUpdatePhase;
         speed--;
     }
     else {
-      isWalking = false;
+      isMoving = false;
       isSlowingDown = false;
     }
     if(firstCall && speed === 0) { 
