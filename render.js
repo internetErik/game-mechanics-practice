@@ -235,5 +235,4 @@ var objectInView;
       }
     }
   }
-
 })();

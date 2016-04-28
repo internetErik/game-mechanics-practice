@@ -323,20 +323,20 @@ var characterUpdatePhase;
           d[X] = 0;
           cPos[X] = 0;
         }
-  else if(curOrigin[X] !== 0 && cPos[X] < CENTER_X) {
-    d[X] = cPos[X] - CENTER_X;
-    cPos[X] = CENTER_X;
-  }
+        else if(curOrigin[X] !== 0 && cPos[X] < CENTER_X) {
+          d[X] = cPos[X] - CENTER_X;
+          cPos[X] = CENTER_X;
+        }
       }
       else { //moving right
         if(cPos[X] + CHARACTER_SIZE > GAME_WIDTH) {
           d[X] = 0;
           cPos[X] = GAME_WIDTH - CHARACTER_SIZE;
         }
-  else if(curOrigin[X] === 0 && cPos[X] > CENTER_X) {
-    d[X] = CENTER_X - cPos[X];
-    cPos[X] = CENTER_X;
-  }
+        else if(curOrigin[X] === 0 && cPos[X] > CENTER_X) {
+          d[X] = CENTER_X - cPos[X];
+          cPos[X] = CENTER_X;
+        }
       }
     }
     //see if we should move the character y position
@@ -347,20 +347,20 @@ var characterUpdatePhase;
           d[Y] = 0;
           cPos[Y] = 0;
         }
-  else if(curOrigin[Y] !== 0 && cPos[Y] < CENTER_Y) {
-    d[Y] = CENTER_Y - cPos[Y];
-    cPos[Y] = CENTER_Y;
-  }
+        else if(curOrigin[Y] !== 0 && cPos[Y] < CENTER_Y) {
+          d[Y] = CENTER_Y - cPos[Y];
+          cPos[Y] = CENTER_Y;
+        }
       }
       else { //moving down
         if(cPos[Y] + CHARACTER_SIZE > GAME_HEIGHT) {
           d[Y] = 0;
           cPos[Y] = GAME_HEIGHT - CHARACTER_SIZE;
         }
-  else if(curOrigin[Y] === 0 && cPos[Y] > CENTER_Y){
-   d[Y] = cPos[Y] - CENTER_Y;
-   cPos[Y] = CENTER_Y;
-  }
+        else if(curOrigin[Y] === 0 && cPos[Y] > CENTER_Y){
+         d[Y] = cPos[Y] - CENTER_Y;
+         cPos[Y] = CENTER_Y;
+        }
       }
     }
   }

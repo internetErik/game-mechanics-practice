@@ -1,3 +1,4 @@
+'use strict';
 //is the key currently held down?
 var keys = {
   //key number to pressed value
