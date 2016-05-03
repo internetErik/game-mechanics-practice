@@ -47,7 +47,11 @@ var characterUpdatePhase;
   var speed = 0;
   var stamina = MAX_STAMINA;
   var bodyWear = 0;
-  //function for getting state of character
+  /**
+   * Used to get internal state of character
+   * @param  {string} property the name of the property we are requesting
+   * @return {any}          the value of the character's property
+   */
   getCharState = function _getCharState(property) {
     switch(property) {
       case 'speed'           : return speed;
@@ -58,7 +62,12 @@ var characterUpdatePhase;
       default: return null;
     }
   }  
-  //handle walking inputs
+  /**
+   * This function is called in the render loop in order to 
+   * handle character input
+   * @return {void}
+   * @sideEffects: walkingTime, staminaTime, isSlowingDown, stamina
+   */
   characterUpdatePhase = function _characterUpdatePhase() {
     if(isPressed('DIRECTIONAL')) {
       if(!isMoving) startWalking();
@@ -92,6 +101,12 @@ var characterUpdatePhase;
       }
     }
   }
+  /**
+   * called when character starts moving to make sure that
+   * the character object is in a good state 
+   * @return {void}
+   * @sideEffects: isMoving, isSlowingDown, walkingTime, speed
+   */
   function startWalking() {
     isMoving = true;
     isSlowingDown = false;
@@ -99,6 +114,11 @@ var characterUpdatePhase;
     speed = INITIAL_SPEED;
     setDirection();
   }
+  /**
+   * Sets the direction the character is moving based on the current keys
+   * @return {void}
+   * @sideEffects: isFacing
+   */
   function setDirection() {
     if(directionsPressed() === 1) {
       if(isPressed('up'))         isFacing = DIRECTIONS.up;
@@ -113,6 +133,11 @@ var characterUpdatePhase;
       else if(isPressed('down') && isPressed('left'))  isFacing = DIRECTIONS.downLeft;
     }
   }
+  /**
+   * Called to see if a change in direction is a full reverse or only a turn
+   * @return {boolean} true if direction has been reversed, false if its only a turn 
+   * @sideEffects: isFacing, isSlowingDown
+   */
   function reversedDirection() {
     var reversed = false;
     var oldDirection = isFacing;
@@ -134,13 +159,18 @@ var characterUpdatePhase;
         reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'right';
       else if(DIRECTIONS[oldDirection] === 'downLeft') 
         reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'left';
-      else if(reversed) {
+      if(reversed) {
         isFacing = oldDirection; //change facing back so we can slide to a stop
         isSlowingDown = true;
       }
     }
     return reversed;
   }
+  /**
+   * Handle logic for creeping (slow walking)
+   * @return {void}
+   * @sideEffects: speed, stamina
+   */
   function creep() {
     if(reversedDirection()) {
       decayWalk();
@@ -148,34 +178,35 @@ var characterUpdatePhase;
     }
     if(speed > MAX_CREEP_SPEED) 
       speed = MAX_CREEP_SPEED;
-    else if(speed < MAX_CREEP_SPEED) {
-      if(walkingTime % SPEEDUP_INTERVAL === 0) 
-        speed++;
-    }
+    else if(speed < MAX_CREEP_SPEED) speedUp();
     moveCharacter();
   }
+  /**
+   * Handle logic for walking (default speed)
+   * @return {void}
+   * @sideEffects: speed, stamina
+   */
   function walk() {
     if(reversedDirection()) {
       decayWalk();
       return;
     }
-    if(speed < MAX_WALK_SPEED) {
-      if(walkingTime % SPEEDUP_INTERVAL === 0) 
-        speed++;
-    }
+    if(speed < MAX_WALK_SPEED) speedUp();
     else if(speed > MAX_WALK_SPEED) 
       speed = MAX_WALK_SPEED;
     moveCharacter();
   }
+  /**
+   * Handle logic for running
+   * @return {void}
+   * @sideEffects: speed, stamina
+   */
   function run() {
     if(reversedDirection()) {
       decayWalk();
       return;
     }
-    if(speed < MAX_RUN_SPEED) {
-      if(walkingTime % SPEEDUP_INTERVAL === 0) 
-        speed++;
-    }
+    if(speed < MAX_RUN_SPEED) speedUp();
     else if(speed > MAX_RUN_SPEED) 
       speed = MAX_RUN_SPEED;
     if(speed > WEAR_SPEED_THRESHOLD) {
@@ -185,15 +216,17 @@ var characterUpdatePhase;
     }
     moveCharacter();
   }
+  /**
+   * Handle logic for sprinting
+   * @return {void}
+   * @sideEffects: speed, stamina 
+   */
   function sprint() {
     if(reversedDirection()) {
       decayWalk();
       return;
     }
-    if(speed < MAX_SPRINT_SPEED) {
-      if(walkingTime % SPEEDUP_INTERVAL === 0) 
-        speed++;
-    }
+    if(speed < MAX_SPRINT_SPEED) speedUp();
     if(speed > WEAR_SPEED_THRESHOLD) {
       if(stamina > 0 && walkingTime % STAMINA_LOSS_INTERVAL === 0)
         stamina -= speed;
@@ -201,6 +234,26 @@ var characterUpdatePhase;
     }
     moveCharacter();
   }
+  //called whenever we are trying to speed up
+  /**
+   * called whenever character is moving in order to change speed
+   * @return {void}
+   * @sideEffects: speed incremements
+   */
+  function speedUp() {
+    //first point to speed happens faster
+    if(speed === 0 && walkingTime > SPEEDUP_INTERVAL/3)
+      speed++
+    else if(walkingTime % SPEEDUP_INTERVAL === 0) 
+      speed++;
+  }
+  /**
+   * start slowing down character for a stop of change directions
+   * @param  {boolean} firstCall set to true on first call in order to allow 
+   *                   for single step to be taken
+   * @return {void}
+   * @sideEffects: speed, isMoving, isSlowingDown
+   */
   function decayWalk(firstCall) {
     var singleStep = false;
     if(speed > 0) {
@@ -218,6 +271,10 @@ var characterUpdatePhase;
     moveCharacter();
     if(singleStep) speed = 0;
   }
+  /**
+   * set the vector of direction change and call function to change position
+   * @return {void}
+   */
   function moveCharacter() {
     var d = [0,0];
     if(isFacing === DIRECTIONS.up) d[Y] -= speed;
@@ -242,6 +299,13 @@ var characterUpdatePhase;
     }
     changePosition(d, 0);
   }
+  /**
+   * See if the position of the character needs to be updated
+   * @param  {[number,number]} d         the change of direction taking place
+   * @param  {number} callCount number of times this function has been called 
+   *                            recursively. This is in order to limit calls
+   * @return {void}
+   */
   function changePosition(/*ref*/d, callCount) {
     //make sure we have a call count
     if(typeof callCount === 'undefined') callCount = 0;
@@ -264,6 +328,12 @@ var characterUpdatePhase;
     if(( d[X] !== 0 || d[Y] !== 0 ) && callCount < 3)
       changePosition(/*ref*/d, callCount+1);
   }
+  /**
+   * See if there are objects blocking the character's movement and modify 
+   * distance moved
+   * @param  {[number, number]} d     the change of direction taking place
+   * @return {void}
+   */
   function checkForObstructions(/*ref*/d) {
     //loops inrement change values until they aren't hitting anything
     //check for obstructions on x-axis
@@ -277,15 +347,25 @@ var characterUpdatePhase;
     else if(d[Y] < 0)
       for(;obstructed([cPos[X], cPos[Y]+d[Y], cPos[WIDTH], cPos[HEIGHT]]) && d[Y] !== 0; d[Y]++);
   }
+/**
+ * true if there is an obstruction, else false
+ * @param  {[number, number, number, number]} pos the position of the character 
+ *                                            we are testing
+ * @return {[type]}     true = obstructed, false = not obstructed
+ */
   function obstructed(pos) {
-    for(let i = stationary.length-1; i >= 0; i--) {
-      if(cLevel === stationary[i].renderLevel && objectInView(stationary[i])) {
+    for(let i = stationary.length-1; i >= 0; i--)
+      if(cLevel === stationary[i].renderLevel && objectInView(stationary[i]))
         if(hitDetect(pos, stationary[i].transformPos(curOrigin)))
           return true;
-      }
-    }
     return false;
   }
+  /**
+   * Change the render origin
+   * @param  {[number, number]} d     the change of direction taking place
+   * @return {void} 
+   * @sideEffects: curOrigin
+   */
   function changeOriginPosition(/*ref*/d) {
     //see if we should move the x origin
     if(d[X] !== 0 && shouldMoveOriginX(d[X])) {
@@ -314,6 +394,12 @@ var characterUpdatePhase;
       }
     }
   }
+  /**
+   * change the position of the character (when at edges of map)
+   * @param  {[number, number]} d     the change of direction taking place
+   * @return {void}
+   * @sideEffects: cPos
+   */
   function changeCharacterPosition(/*ref*/d) {
     //see if we should move the character x position
     if(d[X] !== 0 && shouldMoveCharacterX(d[X])) {
@@ -364,12 +450,27 @@ var characterUpdatePhase;
       }
     }
   }
+  /**
+   * see if we can move the origin
+   * @param  {number} dx     change in x direction
+   * @return {boolean}    true = can move, false = can't move
+   */
   function shouldMoveOriginX(dx) {
     return cPos[X] === CENTER_X;
   }
+  /**
+   * see if we can move the origin
+   * @param  {number} dy     change in y direction
+   * @return {boolean}    true = can move, false = can't move
+   */
   function shouldMoveOriginY(dy) {
     return cPos[Y] === CENTER_Y;
   }
+  /**
+   * see if we can move the character (when at edge of screen)
+   * @param  {number} dx     change in x direction
+   * @return {boolean}    true = can move, false = can't move
+   */
   function shouldMoveCharacterX(dx) {
     //moving left
     if(dx < 0) {
@@ -383,6 +484,11 @@ var characterUpdatePhase;
     }
     return false;
   }
+  /**
+   * see if we can move the character (when at edge of screen)
+   * @param  {number} dy     change in y direction
+   * @return {boolean}    true = can move, false = can't move
+   */
   function shouldMoveCharacterY(dy) {
     //moving up
     if(dy < 0) {
@@ -399,6 +505,12 @@ var characterUpdatePhase;
   }
   /////////////////////////////
   //Hit Detection
+  /**
+   * see if there is an obstruction
+   * @param  {[number, number, number, number]} c1 position of object one
+   * @param  {[number, number, number, number]} c2 position of object two
+   * @return {boolean}    true = hit, false = no hit
+   */
   function hitDetect(c1, c2) { 
     var L = c1[X], T = c1[Y], W = c1[WIDTH], H = c1[HEIGHT],
         l = c2[X], t = c2[Y], w = c2[WIDTH], h = c2[HEIGHT];
