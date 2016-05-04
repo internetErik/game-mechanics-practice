@@ -5,7 +5,6 @@
    * @return {void}
    */
   function gameLoop() {
-    clearFrame();
     characterUpdatePhase();
     render();
   }

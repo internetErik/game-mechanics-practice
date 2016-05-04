@@ -6,7 +6,12 @@ var clearFrame;
 (function(){
   const TILE_WIDTH  = GAME_WIDTH /  TILE_SIZE;
   const TILE_HEIGHT = GAME_HEIGHT /  TILE_SIZE;
+  /**
+   * The main function for rendering stuff
+   * @return {void}
+   */
   render = function _render() {
+    clearFrame();
     for(let i = 0; i < map.length; i++) {
       //render character
       if(i === 1) {
@@ -25,7 +30,7 @@ var clearFrame;
     ctx.fillText("Speed: " + getCharState('speed'), 10, 40);
     ctx.fillText("Stamina: " + getCharState('stamina'), 10, 60);
   }  
-  clearFrame = function _clearFrame() {
+  function clearFrame() {
     ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
