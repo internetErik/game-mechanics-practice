@@ -30,11 +30,20 @@ var clearFrame;
     ctx.fillText("Speed: " + getCharState('speed'), 10, 40);
     ctx.fillText("Stamina: " + getCharState('stamina'), 10, 60);
   }  
+  /**
+   * Clears the frame so new stuff can be rendered on top of it
+   * @return {void}
+   */
   function clearFrame() {
     ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   }
+  /**
+   * Renders stationary objects
+   * @param  {number} level the level of the render we are rendering at
+   * @return {void}
+   */
   function renderStationary(level) {
     //loop through stationary objects
     for(var i = stationary.length-1; i >= 0; i--) {
@@ -50,6 +59,11 @@ var clearFrame;
       }
     }
   }
+  /**
+   * See if an object passed in is currently in the view being rendered
+   * @param  {StationaryObject} or {MobileObject} obj the object we are concerned with
+   * @return {boolean}    true = object in view, false = object not in view
+   */
   objectInView = function _objectInView(obj) {
     //shorter vars for the various heights and widths of object and origin
     var x = obj.pos[X], xw = obj.pos[X] + obj.pos[WIDTH],
@@ -67,6 +81,11 @@ var clearFrame;
       return true;
     return false;
   }
+  /**
+   * actually renders one level of the map
+   * @param  {[string]} map a level of the map passed in
+   * @return {void}
+   */
   function renderMap(map) {
     //define vars to iterate on, we may use them twice
     var x = 0, y = 0, px = 0, py = 0;

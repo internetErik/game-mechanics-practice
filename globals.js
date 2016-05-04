@@ -14,9 +14,11 @@ const MAP_HEIGHT     = map[GROUND].length * TILE_SIZE;
 //Constants for sementic access of position arrays
 const X = 0, Y = 1, WIDTH = 2, HEIGHT = 3;
 //definitions of some characters to render
+//ALL OF THESE MAY MUTATE!
 var cPos = [CENTER_X, CENTER_Y, CHARACTER_SIZE, CHARACTER_SIZE]; //x, y, w, h
 var cLevel = 1;
 var hudFill = "#000000";
 var characterFill = "#ff0000";
 //information about what part of the map to render
+//THIS MAY MUTATE!
 var curOrigin = [800, 100]; //X, Y
