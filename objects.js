@@ -47,4 +47,5 @@ var mobiles    = [];
   MobileObject.prototype.behave = function behave() {
     console.log("doing stuff!");
   }
+  mobiles.push(new MobileObject(500, 500, 50, 50, "#f00", 1));
 })();

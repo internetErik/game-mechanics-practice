@@ -20,6 +20,8 @@ var clearFrame;
       }
       //render stationary objects
       renderStationary(i);
+      //render mobile objects
+      renderMobiles(i);
       //render rest of map
       renderMap(map[i]);
     }
@@ -46,7 +48,7 @@ var clearFrame;
    */
   function renderStationary(level) {
     //loop through stationary objects
-    for(var i = stationary.length-1; i >= 0; i--) {
+    for(let i = stationary.length-1; i >= 0; i--) {
       //first see if object is within view at all
       if(objectInView(stationary[i])) {
         //find where to render it
@@ -55,6 +57,26 @@ var clearFrame;
             w = stationary[i].pos[WIDTH],
             h = stationary[i].pos[HEIGHT];
         ctx.fillStyle = stationary[i].color;
+        ctx.fillRect(x, y, w, h);
+      }
+    }
+  }
+  /**
+   * Renders mobile objects
+   * @param  {number} level the level of the render we are rendering at
+   * @return {void}
+   */
+  function renderMobiles(level) {
+    //loop through stationary objects
+    for(let i = mobiles.length-1; i >= 0; i--) {
+      //first see if object is within view at all
+      if(objectInView(mobiles[i])) {
+        //find where to render it
+        let x = mobiles[i].pos[X] - curOrigin[X], //may be negative
+            y = mobiles[i].pos[Y] - curOrigin[Y], //may be negative
+            w = mobiles[i].pos[WIDTH],
+            h = mobiles[i].pos[HEIGHT];
+        ctx.fillStyle = mobiles[i].color;
         ctx.fillRect(x, y, w, h);
       }
     }

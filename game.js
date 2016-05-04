@@ -5,7 +5,10 @@
    * @return {void}
    */
   function gameLoop() {
+    var i = mobiles.length-1;
     characterUpdatePhase();
+    for(; i >= 0; i--)
+      mobiles[i].behave();
     render();
   }
   //register a function to perform on spacebar
