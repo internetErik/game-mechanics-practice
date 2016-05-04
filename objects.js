@@ -13,6 +13,7 @@ var mobiles    = [];
     this.pos = [x, y, width, height];
     this.color = color;
     this.renderLevel = renderLevel;
+    //map is a description of the object akin to that of the map
     this.map = map;
   }
   StationaryObject.prototype.transformPos = function transformPos(curOrigin) {
@@ -23,7 +24,7 @@ var mobiles    = [];
   stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1));
 })();
 (function(){
-  function MobileObject(x, y, width, height, color, renderLevel, map) {
+  function MobileObject(x, y, width, height, color, renderLevel, map, program) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning void");
       return;
@@ -32,10 +33,18 @@ var mobiles    = [];
     this.pos = [x, y, width, height];
     this.color = color;
     this.renderLevel = renderLevel;
+    //map is a description of the object akin to that of the map
     this.map = map;
+    //this is the program that the mobile will carry out.
+    //it is either a function, or a number that corresponds to a type of 
+    //behavior
+    this.program = program;
   }
   MobileObject.prototype.transformPos = function transformPos(curOrigin) {
     var ox = curOrigin[0], oy = curOrigin[1];
     return [this.pos[0] - ox, this.pos[1] - oy, this.pos[2], this.pos[3]];
+  }
+  MobileObject.prototype.behave = function behave() {
+    console.log("doing stuff!");
   }
 })();

@@ -1,18 +1,18 @@
 'use strict';
 (function() {
+  /**
+   * the main loop for the game
+   * @return {void}
+   */
   function gameLoop() {
     clearFrame();
     characterUpdatePhase();
     render();
-  }    
-  var interval = setInterval(gameLoop.bind(this), 10);  
-  function clearFrame() {
-    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   }
   //register a function to perform on spacebar
   subscribeToKeyPress('32', function() {
     console.log("act");
   });
+  //start the game loop
+  var interval = setInterval(gameLoop.bind(this), 10);  
 })();

@@ -2,6 +2,7 @@
 //functions in global scope
 var render;
 var objectInView;
+var clearFrame;
 (function(){
   const TILE_WIDTH  = GAME_WIDTH /  TILE_SIZE;
   const TILE_HEIGHT = GAME_HEIGHT /  TILE_SIZE;
@@ -23,6 +24,11 @@ var objectInView;
     ctx.fillText("Facing: " + getCharState('currentDirection'), 10, 20);
     ctx.fillText("Speed: " + getCharState('speed'), 10, 40);
     ctx.fillText("Stamina: " + getCharState('stamina'), 10, 60);
+  }  
+  clearFrame = function _clearFrame() {
+    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   }
   function renderStationary(level) {
     //loop through stationary objects
