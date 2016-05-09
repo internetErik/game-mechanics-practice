@@ -1,8 +1,6 @@
 'use strict';
-//stationary objects on the map
-var stationary = [];
-//mobile objects (npcs) on the map
-var mobiles    = [];
+var stationary = [];//stationary objects on the map
+var mobiles    = [];//mobile objects (npcs) on the map
 (function() {
   function StationaryObject(x, y, width, height, color, renderLevel, map) {
     if(!new.target) {
@@ -73,7 +71,6 @@ var mobiles    = [];
       '7':         'downLeft',
     }
     this.isFacing = 3;
-    this.lastDirection = -1;
     this.isMoving = false;
     this.isSlowingDown = false;
     this.walkingTime = 0;
@@ -81,10 +78,12 @@ var mobiles    = [];
     this.speed = 0;
     this.stamina = this.MAX_STAMINA;
     this.bodyWear = 0;
+    this.isMoving = false;
     this.isCreeping = false;
     this.isWalking = false;
     this.isRunning = false;
     this.isSprinting = false;
+    this.target = [this.pos[X], this.pos[Y]];
   }
   /**
    * basic level of behavior
@@ -92,15 +91,21 @@ var mobiles    = [];
    */
   MobileObject.prototype.behave = function behave() {
     //the goal will be to follow within some distance of the character
-    var target;
     //1) See if character is visible
-    target = this.findTarget();
-    if(target) {
+    this.target = this.findTarget();
+    if(this.target[X] !== this.pos[X] && this.target[Y] !== this.pos[Y]) {
     //2) set direction to go towards character
-      // this.look();
+      this.look();
     //3) start or continue movement towards character
-      this.move(target);
+      this.move();
     }
+  }
+  /**
+   * Sets mobile's direction to face target
+   * @return {void}
+   */
+  MobileObject.prototype.look = function look() {
+    this.reversedDirection();
   }
   /**
    * Sees if the character is within view. We assume that the mob sees one screen
@@ -115,31 +120,27 @@ var mobiles    = [];
         t = this.pos[Y] - (GAME_HEIGHT/2) + (this.pos[HEIGHT]/2), 
         w = GAME_WIDTH, h = GAME_HEIGHT;
     if(l <= L+W && l >= L-w && t <= T+H && t >= T-h)
-      return [cPos[X], cPos[Y]];
+      return [cPos[X], cPos[Y]]; //position of the target
     else
-      return void(0);
-    
+      return [this.pos[X], this.pos[Y]]; // return the position of the mobile
   }
   /**
    * move mobile towards target
    * @param  {[number, number]} target the position to move towards
    * @return {void}
    */
-  MobileObject.prototype.move = function move(target) {
-    if(this.isCreeping) {
-
-    }
+  MobileObject.prototype.move = function move() {
+    if(!this.isMoving) this.startCreeping();
+    if(this.isCreeping) this.creep();
     else if(this.isWalking) {}
     else if(this.isRunning) {}
     else if(this.isSprinting) {}
-    else {
-      this.startCreeping();
-    }
   }
   /**
    * 
    */
   MobileObject.prototype.startCreeping = function startCreeping() {
+    this.isMoving = true;
     this.isCreeping = true;
     this.isWalking = false;
     this.isRunning = false;
@@ -150,6 +151,145 @@ var mobiles    = [];
       this.speed = this.MAX_CREEP_SPEED;
     else
       this.speed = this.INITIAL_SPEED;
+  }
+  /**
+   * called whenever character is moving in order to change speed
+   * @return {void}
+   * @sideEffects: speed incremements
+   */
+  MobileObject.prototype.speedUp = function speedUp() {
+    //first point to speed happens faster
+    if(this.speed === 0 && this.walkingTime > this.SPEEDUP_INTERVAL/3)
+      this.speed++
+    else if(this.walkingTime % this.SPEEDUP_INTERVAL === 0) 
+      this.speed++;
+  }
+  /**
+   * Handle logic for creeping (slow walking)
+   * @return {void}
+   * @sideEffects: speed, stamina
+   */
+  MobileObject.prototype.creep = function creep() {
+    if(this.reversedDirection()) {
+      this.decayWalk();
+      return;
+    }
+    if(this.speed > this.MAX_CREEP_SPEED) 
+      this.speed = this.MAX_CREEP_SPEED;
+    else if(this.speed < this.MAX_CREEP_SPEED) this.speedUp();
+    this.moveMobile();
+  }
+  /**
+   * Sets the direction based on the position of the target
+   * @return {null}
+   * @sideEffects: isFacing
+   */
+  MobileObject.prototype.setDirection = function setDirection() {
+    //find where the target is relative to the mobile
+    //[_,-] = up
+    //[_,+] = down
+    //[-,_] = left
+    //[+,_] = right
+    if(this.pos[X] > this.target[X]) { //left
+      if(this.pos[Y] > this.target[Y]) { // bottom
+      }
+      else { //top
+      }
+    }
+    else { //right
+      if(this.pos[Y] > this.target[Y]) { // bottom
+      }
+      else { //top
+      }
+    }
+  }
+  /**
+   * Called to see if a change in direction is a full reverse or only a turn
+   * @return {boolean} true if direction has been reversed, false if its only a turn 
+   * @sideEffects: isFacing, isSlowingDown
+   */
+  MobileObject.prototype.reversedDirection = function reversedDirection() {
+    var reversed = false;
+    var oldDirection = this.isFacing;
+    this.setDirection();
+    if(oldDirection !== this.isFacing) {
+      if(this.DIRECTION[oldDirection] === 'up') 
+        reversed = this.DIRECTION[isFacing] !== 'upRight' && this.DIRECTION[isFacing] !== 'upLeft';
+      else if(this.DIRECTION[oldDirection] === 'down') 
+        reversed = this.DIRECTION[isFacing] !== 'downRight' && this.DIRECTION[isFacing] !== 'downLeft';
+      else if(this.DIRECTION[oldDirection] === 'left') 
+        reversed = this.DIRECTION[isFacing] !== 'upLeft' && this.DIRECTION[isFacing] !== 'downLeft';
+      else if(this.DIRECTION[oldDirection] === 'right') 
+        reversed = this.DIRECTION[isFacing] !== 'upRight' && this.DIRECTION[isFacing] !== 'downRight';
+      else if(this.DIRECTION[oldDirection] === 'upRight') 
+        reversed = this.DIRECTION[isFacing] !== 'up' && this.DIRECTION[isFacing] !== 'right';
+      else if(this.DIRECTION[oldDirection] === 'upLeft') 
+        reversed = this.DIRECTION[isFacing] !== 'up' && this.DIRECTION[isFacing] !== 'left';
+      else if(this.DIRECTION[oldDirection] === 'downRight') 
+        reversed = this.DIRECTION[isFacing] !== 'down' && this.DIRECTION[isFacing] !== 'right';
+      else if(this.DIRECTION[oldDirection] === 'downLeft') 
+        reversed = this.DIRECTION[isFacing] !== 'down' && this.DIRECTION[isFacing] !== 'left';
+      if(reversed) {
+        this.isFacing = oldDirection; //change facing back so we can slide to a stop
+        this.isSlowingDown = true;
+      }
+    }
+    return reversed;
+  }
+  /**
+   * start slowing down character for a stop of change directions
+   * @param  {boolean} firstCall set to true on first call in order to allow 
+   *                   for single step to be taken
+   * @return {void}
+   * @sideEffects: speed, isMoving, isSlowingDown
+   */
+  MobileObject.prototype.decayWalk = function decayWalk(firstCall) {
+    var singleStep = false;
+    if(this.speed > 0) {
+      if(this.walkingTime % this.SLOWDOWN_INTERVAL === 0)
+        this.speed--;
+    }
+    else {
+      this.isCreeping = false;
+      this.isWalking = false;
+      this.isRunning = false;
+      this.isSprinting = false;
+      this.isSlowingDown = false;
+    }
+    if(firstCall && this.speed === 0) { 
+      this.singleStep = true;
+      this.speed = 1;
+    }
+    this.moveMobile();
+    if(singleStep) this.speed = 0;
+  }
+  /**
+   * set the vector of direction change and call function to change position
+   * @return {void}
+   */
+  MobileObject.prototype.moveMobile = function moveMobile() {
+    var d = [0,0];
+    if(this.isFacing === this.DIRECTIONS.up) d[Y] -= this.speed;
+    else if(this.isFacing === this.DIRECTIONS.down) d[Y] += this.speed;
+    else if(this.isFacing === this.DIRECTIONS.left) d[X] -= this.speed;
+    else if(this.isFacing === this.DIRECTIONS.right) d[X] += this.speed;
+    else if(this.isFacing === this.DIRECTIONS.upRight) {
+      d[X] += Math.ceil(this.speed/2);
+      d[Y] -= Math.ceil(this.speed/2);
+    }
+    else if(this.isFacing === this.DIRECTIONS.upLeft) {
+      d[X] -= Math.ceil(this.speed/2);
+      d[Y] -= Math.ceil(this.speed/2);
+    }
+    else if(this.isFacing === this.DIRECTIONS.downRight) {
+      d[X] += Math.ceil(speed/2);
+      d[Y] += Math.ceil(speed/2);
+    }
+    else if(this.isFacing === this.DIRECTIONS.downLeft) {
+      d[X] -= Math.ceil(this.speed/2);
+      d[Y] += Math.ceil(this.speed/2);
+    }
+    // this.changePosition(d, 0);
   }
   mobiles.push(new MobileObject(500, 500, 50, 50, "#f22", 1));
 })();

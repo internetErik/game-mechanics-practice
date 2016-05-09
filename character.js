@@ -39,7 +39,6 @@ var characterUpdatePhase;
     '7':         'downLeft',
   }
   var isFacing = 3;
-  var lastDirection = -1;
   var isMoving = false;
   var isSlowingDown = false;
   var walkingTime = 0;
@@ -234,7 +233,6 @@ var characterUpdatePhase;
     }
     moveCharacter();
   }
-  //called whenever we are trying to speed up
   /**
    * called whenever character is moving in order to change speed
    * @return {void}
