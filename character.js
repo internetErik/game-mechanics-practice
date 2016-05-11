@@ -40,6 +40,7 @@ var characterUpdatePhase;
   }
   var isFacing = 3;
   var isMoving = false;
+  var isReversing = false;//if character is moving in opposite direction from facing direction
   var isSlowingDown = false;
   var walkingTime = 0;
   var staminaTime = 0;

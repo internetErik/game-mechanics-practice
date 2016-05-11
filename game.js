@@ -21,18 +21,42 @@
     //arrays to store indexes to objects that can be interacted with
     var stationaryNdxs = [];
     var mobileNdx      = [];
+    var facing = getCharState('currentDirection');
     console.log("interact");
     //check if there is an object nearby
     //this object will be a mobile or stationary object
-    for(let i = mobiles.length; i >= 0; i--)
-      if(isInRange())
+    for(let i = mobiles.length-1; i >= 0; i--)
+      if(isInRange(mobiles[i], cPos, facing))
         mobileNdx.push(i);
-    for(let i = stationary.length; i >= 0; i--)
-      if(isInRange())
+    for(let i = stationary.length-1; i >= 0; i--)
+      if(isInRange(stationary[i], cPos, facing))
         mobileNdx.push(i);
 
     function isInRange(obj, character, facing) {
-      return true;
+      //imagines object (=obj) as bigger by 10px on each side
+      var nObj = [obj.pos[X]-10, obj.pos[Y]-10, obj.pos[WIDTH]+20, obj.pos[HEIGHT]+20];
+      //depending on direction being faced (=facing) detect a 'hit'
+      switch(facing) {
+        case 'up': 
+        case 'upLeft':
+        case 'upRight':
+          if(facing === 'up') {}
+          else if(facing === 'upLeft') {}
+          else if(facing === 'upRight') {}
+          return false;
+        case 'down': 
+        case 'downLeft':
+        case 'downRight':
+          if(facing === 'down') {}
+          else if(facing === 'downLeft') {}
+          else if(facing === 'downRight') {}
+          return false;
+        case 'left':
+          return false;
+        case 'right':
+          return false;
+        default: return false;
+      }
     }
     
   });
