@@ -43,7 +43,7 @@ var subscribeToKeyPress;
     if(keys[keyCode] !== undefined)
        keys[keyCode] = true;
     if(subscriptions[keyCode]) 
-      for(let i = 0; i < subscriptions[keyCode].length; i++)
+      for(let i = subscriptions[keyCode].length-1; i >= 0; i--)
         subscriptions[keyCode][i]();
   });
   //we released a button
@@ -61,7 +61,7 @@ var subscribeToKeyPress;
     return isPressed('up') + isPressed('down') + isPressed('left') + isPressed('right');
   }
   subscribeToKeyPress = function _subscribeToKeyPress(key, fn) {
-    if(subscriptions[key]) subscriptions[key].push(fn);
+    if(subscriptions[key]) subscriptions[key].unshift(fn);
     else subscriptions[key] = [fn];
     return function unsubscribe() {
       var ndx = subscriptions[key].indexOf(fn);
