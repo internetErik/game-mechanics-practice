@@ -63,5 +63,10 @@ var subscribeToKeyPress;
   subscribeToKeyPress = function _subscribeToKeyPress(key, fn) {
     if(subscriptions[key]) subscriptions[key].push(fn);
     else subscriptions[key] = [fn];
+    return function unsubscribe() {
+      var ndx = subscriptions[key].indexOf(fn);
+      if(ndx > -1)
+        subscriptions[key].splice(ndx, 1);
+    }
   }
 })();

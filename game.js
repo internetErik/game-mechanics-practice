@@ -17,7 +17,7 @@
   // if character is close to two things he will interact with the closer of them
   // if there are two equally close, he will interact with the left one
   // if facing a diagonal, objects on both sides of diagonal will be considered
-  subscribeToKeyPress('32', function() {
+  var unsubfn = subscribeToKeyPress('32', function() {
     //arrays to store indexes to objects that can be interacted with
     var stationaryNdxs = [];
     var mobileNdxs     = [];

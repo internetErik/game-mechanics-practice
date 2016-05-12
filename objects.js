@@ -94,6 +94,13 @@ var mobiles    = [];//mobile objects (npcs) on the map
     this.target = [this.pos[X], this.pos[Y]];
   }
   /**
+   * called when interacted with
+   * @return {[type]} [description]
+   */
+  MobileObject.prototype.react = function react() {
+
+  }
+  /**
    * basic level of behavior
    * @return {void}
    */
