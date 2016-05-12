@@ -25,18 +25,18 @@
     //check if there is an object nearby
     //this object will be a mobile or stationary object
     for(let i = mobiles.length-1; i >= 0; i--)
-      if(isInRange(mobiles[i], cPos, facing, 20))
+      if(isInRange(cPos, facing, 20, mobiles[i]))
         mobileNdxs.push(i);
     for(let i = stationary.length-1; i >= 0; i--)
-      if(isInRange(stationary[i], cPos, facing, 20))
+      if(isInRange(cPos, facing, 20, stationary[i]))
         stationaryNdxs.push(i);
       console.log("mobiles",mobileNdxs);
       console.log("stationary", stationaryNdxs);
-    function isInRange(obj, character, facing, range) {
+    function isInRange(agent, facing, range, patient) {
       //imagines object (=obj) as bigger by 10px on each side
-      var x = obj.pos[X], y = obj.pos[Y], w = obj.pos[WIDTH], h = obj.pos[HEIGHT];
-      var cX = character[X] + curOrigin[X], cY = character[Y] + curOrigin[Y], 
-          cW = character[WIDTH], cH = character[HEIGHT];
+      var x = patient.pos[X], y = patient.pos[Y], w = patient.pos[WIDTH], h = patient.pos[HEIGHT];
+      var cX = agent[X] + curOrigin[X], cY = agent[Y] + curOrigin[Y], 
+          cW = agent[WIDTH], cH = agent[HEIGHT];
       //depending on direction being faced (=facing) detect a 'hit'
       switch(facing) {
         case 'up': 

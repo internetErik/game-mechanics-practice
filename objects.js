@@ -2,11 +2,13 @@
 var stationary = [];//stationary objects on the map
 var mobiles    = [];//mobile objects (npcs) on the map
 (function() {
-  var oConfig = {
+  //these are flags for objects. 
+  //in use, undefined should produce the same result as false
+  var flags = {
     solid: true, //true = cannot be walked through
     interactable: true //true = reacts to interaction
   };
-  function StationaryObject(x, y, width, height, color, renderLevel, map) {
+  function StationaryObject(x, y, width, height, color, renderLevel, map, flags) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning void");
       return;
@@ -28,7 +30,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
   stationary.push(new StationaryObject(1254, 1254, 200, 200, "#f60", 1));
 })();
 (function(){
-  function MobileObject(x, y, width, height, color, renderLevel, map, program) {
+  function MobileObject(x, y, width, height, color, renderLevel, map, program, flags) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning void");
       return;
