@@ -20,6 +20,8 @@ var mobiles    = [];//mobile objects (npcs) on the map
   }
   stationary.push(new StationaryObject(1000, 1000, 200, 200, "#f60", 1));
   stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1));
+  stationary.push(new StationaryObject(1000, 1254, 200, 200, "#f60", 1));
+  stationary.push(new StationaryObject(1254, 1254, 200, 200, "#f60", 1));
 })();
 (function(){
   function MobileObject(x, y, width, height, color, renderLevel, map, program) {
