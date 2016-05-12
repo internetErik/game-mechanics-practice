@@ -42,7 +42,7 @@
         case 'up': 
           return ((cX + cW >= x && cX + cW <= x + w) || 
                   (cX >= x      && cX <= x + w     )   ) && 
-                 cY <= y + h + range && cY <= y + h;
+                 cY <= y + h + range && cY >= y + h;
         case 'down': 
           return ((cX + cW >= x && cX + cW <= x + w) || 
                   (cX >= x      && cX <= x + w)        ) && 
@@ -59,7 +59,7 @@
           return ( //up
                   ((cX + cW >= x && cX + cW <= x + w) || 
                   (cX >= x      && cX <= x + w     )   ) && 
-                  cY <= y + h + range && cY <= y + h
+                  cY <= y + h + range && cY >= y + h
                   ) ||
                  ( //left
                   ((cY + cH >= y && cY + cH <= y + h) || 
@@ -70,7 +70,7 @@
           return ( //up
                   ((cX + cW >= x && cX + cW <= x + w) || 
                   (cX >= x      && cX <= x + w     )   ) && 
-                  cY <= y + h + range && cY <= y + h
+                  cY <= y + h + range && cY >= y + h
                   ) || 
                  ( //right
                   ((cY + cH >= y && cY + cH <= y + h) || 

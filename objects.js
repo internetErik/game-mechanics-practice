@@ -2,6 +2,10 @@
 var stationary = [];//stationary objects on the map
 var mobiles    = [];//mobile objects (npcs) on the map
 (function() {
+  var oConfig = {
+    solid: true, //true = cannot be walked through
+    interactable: true //true = reacts to interaction
+  };
   function StationaryObject(x, y, width, height, color, renderLevel, map) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning void");
