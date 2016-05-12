@@ -22,7 +22,6 @@
     var stationaryNdxs = [];
     var mobileNdxs     = [];
     var facing = getCharState('currentDirection');
-    console.log("interact");
     //check if there is an object nearby
     //this object will be a mobile or stationary object
     for(let i = mobiles.length-1; i >= 0; i--)
@@ -57,10 +56,50 @@
           return ((cY + cH >= y && cY + cH <= y + h) || 
                   (cY >= y      && cY <= y + h     )   ) &&
                  cX + cW >= x - range && cX + cW <= x + w;
-        case 'upLeft': break;
-        case 'upRight': break;
-        case 'downLeft': break;
-        case 'downRight': break;
+        case 'upLeft': 
+          return ( //up
+                  ((cX + cW >= x && cX + cW <= x + w) || 
+                  (cX >= x      && cX <= x + w     )   ) && 
+                  cY <= y + h + range && cY <= y + h
+                  ) ||
+                 ( //left
+                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  (cY >= y      && cY <= y + h     )   ) &&
+                  cX <= x + w + range && cX >= x
+                  );
+        case 'upRight': 
+          return ( //up
+                  ((cX + cW >= x && cX + cW <= x + w) || 
+                  (cX >= x      && cX <= x + w     )   ) && 
+                  cY <= y + h + range && cY <= y + h
+                  ) || 
+                 ( //right
+                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  (cY >= y      && cY <= y + h     )   ) &&
+                  cX + cW >= x - range && cX + cW <= x + w
+                  );
+        case 'downLeft':
+          return ( //down
+                  ((cX + cW >= x && cX + cW <= x + w) || 
+                  (cX >= x      && cX <= x + w)        ) && 
+                  cY + cH >= y - range && cY + cH <= y + h
+                  ) || 
+                 ( //left
+                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  (cY >= y      && cY <= y + h     )   ) &&
+                  cX <= x + w + range && cX >= x
+                  );
+        case 'downRight': 
+          return ( //down
+                  ((cX + cW >= x && cX + cW <= x + w) || 
+                  (cX >= x      && cX <= x + w)        ) && 
+                  cY + cH >= y - range && cY + cH <= y + h
+                  ) || 
+                 ( //right
+                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  (cY >= y      && cY <= y + h     )   ) &&
+                  cX + cW >= x - range && cX + cW <= x + w
+                  );
         default: return false;//this should never happen
       }
       return false;
