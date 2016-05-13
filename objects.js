@@ -5,12 +5,12 @@ var mobiles    = [];//mobile objects (npcs) on the map
   //these are flags for objects. 
   //in use, undefined should produce the same result as false
   var flags = {
-    solid: true, //true = cannot be walked through
-    interactable: true //true = reacts to interaction
+    solid       : true, //true = cannot be walked through
+    interactable: true  //true = reacts to interaction
   };
   function StationaryObject(x, y, width, height, color, renderLevel, map, flags) {
     if(!new.target) {
-      console.log("Please call StationaryObject with 'new'! returning void");
+      console.log("Please call StationaryObject with 'new'! returning undefined");
       return;
     }
     //x and y are relative to the entire map, and not just the render frame
@@ -32,7 +32,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
 (function(){
   function MobileObject(x, y, width, height, color, renderLevel, map, program, flags) {
     if(!new.target) {
-      console.log("Please call StationaryObject with 'new'! returning void");
+      console.log("Please call StationaryObject with 'new'! returning undefined");
       return;
     }
     //x and y are relative to the entire map, and not just the render frame
