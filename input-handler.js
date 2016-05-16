@@ -12,6 +12,7 @@ var subscribeToKeyPress;
     '65'      : false, //a
     '83'      : false, //s
     '68'      : false, //d
+    '81'      : false, //q
     '37'      : false, //left
     '38'      : false, //up
     '39'      : false, //right
@@ -26,6 +27,7 @@ var subscribeToKeyPress;
     'a'       : 65,
     's'       : 83,
     'd'       : 68,
+    'q'       : 81,
     'left'    : 37,
     'up'      : 38,
     'right'   : 39,

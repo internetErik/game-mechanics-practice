@@ -28,9 +28,10 @@ var clearFrame;
     //render information
     ctx.fillStyle = hudFill;
     ctx.font = "18px Arial";
-    ctx.fillText("Facing: " + getCharState('currentDirection'), 10, 20);
-    ctx.fillText("Speed: " + getCharState('speed'), 10, 40);
-    ctx.fillText("Stamina: " + getCharState('stamina'), 10, 60);
+    ctx.fillText("Facing: " + getCharState('currentFacingDirection'), 10, 20);
+    ctx.fillText("Strafing: " + getCharState('isStrafing'), 10, 40);
+    ctx.fillText("Speed: " + getCharState('speed'), 10, 60);
+    ctx.fillText("Stamina: " + getCharState('stamina'), 10, 80);
   }  
   /**
    * Clears the frame so new stuff can be rendered on top of it

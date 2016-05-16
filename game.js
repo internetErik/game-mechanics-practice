@@ -21,7 +21,7 @@
     //arrays to store indexes to objects that can be interacted with
     var stationaryNdxs = [];
     var mobileNdxs     = [];
-    var facing = getCharState('currentDirection');
+    var facing = getCharState('currentFacingDirection');
     //check if there is an object nearby
     //this object will be a mobile or stationary object
     for(let i = mobiles.length-1; i >= 0; i--)

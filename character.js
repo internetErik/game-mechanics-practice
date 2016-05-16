@@ -38,7 +38,8 @@ var characterUpdatePhase;
     '6':         'downRight',
     '7':         'downLeft',
   }
-  var isFacing = 3;
+  var facingDirection = 3;
+  var momentumDirection = 3;
   var isMoving = false;
   var isReversing = false;//if character is moving in opposite direction from facing direction
   var isSlowingDown = false;
@@ -57,8 +58,10 @@ var characterUpdatePhase;
       case 'speed'           : return speed;
       case 'isMoving'        : return isMoving;
       case 'startWalking'    : return startWalking;
-      case 'currentDirection': return DIRECTIONS[isFacing];
+      case 'currentFacingDirection': return DIRECTIONS[facingDirection];
+      case 'currentMovingDirection': return DIRECTIONS[momentumDirection];
       case 'stamina'         : return stamina;
+      case 'isStrafing'      : return isPressed('q');
       default: return null;
     }
   }  
@@ -112,55 +115,58 @@ var characterUpdatePhase;
     isSlowingDown = false;
     walkingTime = 0;
     speed = INITIAL_SPEED;
-    setDirection();
+    setMovingDirection();
   }
   /**
    * Sets the direction the character is moving based on the current keys
    * @return {void}
-   * @sideEffects: isFacing
+   * @sideEffects: momentumDirection
    */
-  function setDirection() {
+  function setMovingDirection() {
     if(directionsPressed() === 1) {
-      if(isPressed('up'))         isFacing = DIRECTIONS.up;
-      else if(isPressed('down'))  isFacing = DIRECTIONS.down;
-      else if(isPressed('left'))  isFacing = DIRECTIONS.left;
-      else if(isPressed('right')) isFacing = DIRECTIONS.right;
+      if(isPressed('up'))         momentumDirection = DIRECTIONS.up;
+      else if(isPressed('down'))  momentumDirection = DIRECTIONS.down;
+      else if(isPressed('left'))  momentumDirection = DIRECTIONS.left;
+      else if(isPressed('right')) momentumDirection = DIRECTIONS.right;
     }
     else {
-      if(isPressed('up') && isPressed('right'))   isFacing = DIRECTIONS.upRight;
-      else if(isPressed('up') && isPressed('left'))    isFacing = DIRECTIONS.upLeft;
-      else if(isPressed('down') && isPressed('right')) isFacing = DIRECTIONS.downRight;
-      else if(isPressed('down') && isPressed('left'))  isFacing = DIRECTIONS.downLeft;
+      if(isPressed('up') && isPressed('right'))   momentumDirection = DIRECTIONS.upRight;
+      else if(isPressed('up') && isPressed('left'))    momentumDirection = DIRECTIONS.upLeft;
+      else if(isPressed('down') && isPressed('right')) momentumDirection = DIRECTIONS.downRight;
+      else if(isPressed('down') && isPressed('left'))  momentumDirection = DIRECTIONS.downLeft;
+    }
+    if( ! isPressed('q')) { 
+      facingDirection = momentumDirection;
     }
   }
   /**
    * Called to see if a change in direction is a full reverse or only a turn
    * @return {boolean} true if direction has been reversed, false if its only a turn 
-   * @sideEffects: isFacing, isSlowingDown
+   * @sideEffects: momentumDirection, isSlowingDown
    */
   function reversedDirection() {
     var reversed = false;
-    var oldDirection = isFacing;
-    setDirection();
-    if(oldDirection !== isFacing) {
+    var oldDirection = momentumDirection;
+    setMovingDirection();
+    if(oldDirection !== momentumDirection) {
       if(DIRECTIONS[oldDirection] === 'up') 
-        reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'upLeft';
+        reversed = DIRECTIONS[momentumDirection] !== 'upRight' && DIRECTIONS[momentumDirection] !== 'upLeft';
       else if(DIRECTIONS[oldDirection] === 'down') 
-        reversed = DIRECTIONS[isFacing] !== 'downRight' && DIRECTIONS[isFacing] !== 'downLeft';
+        reversed = DIRECTIONS[momentumDirection] !== 'downRight' && DIRECTIONS[momentumDirection] !== 'downLeft';
       else if(DIRECTIONS[oldDirection] === 'left') 
-        reversed = DIRECTIONS[isFacing] !== 'upLeft' && DIRECTIONS[isFacing] !== 'downLeft';
+        reversed = DIRECTIONS[momentumDirection] !== 'upLeft' && DIRECTIONS[momentumDirection] !== 'downLeft';
       else if(DIRECTIONS[oldDirection] === 'right') 
-        reversed = DIRECTIONS[isFacing] !== 'upRight' && DIRECTIONS[isFacing] !== 'downRight';
+        reversed = DIRECTIONS[momentumDirection] !== 'upRight' && DIRECTIONS[momentumDirection] !== 'downRight';
       else if(DIRECTIONS[oldDirection] === 'upRight') 
-        reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'right';
+        reversed = DIRECTIONS[momentumDirection] !== 'up' && DIRECTIONS[momentumDirection] !== 'right';
       else if(DIRECTIONS[oldDirection] === 'upLeft') 
-        reversed = DIRECTIONS[isFacing] !== 'up' && DIRECTIONS[isFacing] !== 'left';
+        reversed = DIRECTIONS[momentumDirection] !== 'up' && DIRECTIONS[momentumDirection] !== 'left';
       else if(DIRECTIONS[oldDirection] === 'downRight') 
-        reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'right';
+        reversed = DIRECTIONS[momentumDirection] !== 'down' && DIRECTIONS[momentumDirection] !== 'right';
       else if(DIRECTIONS[oldDirection] === 'downLeft') 
-        reversed = DIRECTIONS[isFacing] !== 'down' && DIRECTIONS[isFacing] !== 'left';
+        reversed = DIRECTIONS[momentumDirection] !== 'down' && DIRECTIONS[momentumDirection] !== 'left';
       if(reversed) {
-        isFacing = oldDirection; //change facing back so we can slide to a stop
+        momentumDirection = oldDirection; //change facing back so we can slide to a stop
         isSlowingDown = true;
       }
     }
@@ -276,23 +282,23 @@ var characterUpdatePhase;
    */
   function moveCharacter() {
     var d = [0,0];
-    if(isFacing === DIRECTIONS.up) d[Y] -= speed;
-    else if(isFacing === DIRECTIONS.down) d[Y] += speed;
-    else if(isFacing === DIRECTIONS.left) d[X] -= speed;
-    else if(isFacing === DIRECTIONS.right) d[X] += speed;
-    else if(isFacing === DIRECTIONS.upRight) {
+    if(momentumDirection === DIRECTIONS.up) d[Y] -= speed;
+    else if(momentumDirection === DIRECTIONS.down) d[Y] += speed;
+    else if(momentumDirection === DIRECTIONS.left) d[X] -= speed;
+    else if(momentumDirection === DIRECTIONS.right) d[X] += speed;
+    else if(momentumDirection === DIRECTIONS.upRight) {
       d[X] += Math.ceil(speed/2);
       d[Y] -= Math.ceil(speed/2);
     }
-    else if(isFacing === DIRECTIONS.upLeft) {
+    else if(momentumDirection === DIRECTIONS.upLeft) {
       d[X] -= Math.ceil(speed/2);
       d[Y] -= Math.ceil(speed/2);
     }
-    else if(isFacing === DIRECTIONS.downRight) {
+    else if(momentumDirection === DIRECTIONS.downRight) {
       d[X] += Math.ceil(speed/2);
       d[Y] += Math.ceil(speed/2);
     }
-    else if(isFacing === DIRECTIONS.downLeft) {
+    else if(momentumDirection === DIRECTIONS.downLeft) {
       d[X] -= Math.ceil(speed/2);
       d[Y] += Math.ceil(speed/2);
     }
