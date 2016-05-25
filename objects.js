@@ -6,7 +6,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
   //in use, undefined should produce the same result as false
   var flags = {
     solid       : true, //true = cannot be walked through
-    interactable: true  //true = reacts to interaction
+    interactable: false  //true = reacts to interaction
   };
   function StationaryObject(x, y, width, height, color, renderLevel, map, flags) {
     if(!new.target) {
@@ -19,17 +19,27 @@ var mobiles    = [];//mobile objects (npcs) on the map
     this.renderLevel = renderLevel;
     //map is a description of the object akin to that of the map
     this.map = map;
+    //load flags
+    if(flags) {
+      let keys = Object.keys(flags);
+      for(let i = keys.length-1;i >= 0; i--)
+        this[keys[i]] = flags[keys[i]];
+    }
   }
   StationaryObject.prototype.transformPos = function transformPos(curOrigin) {
     var ox = curOrigin[0], oy = curOrigin[1];
     return [this.pos[0] - ox, this.pos[1] - oy, this.pos[2], this.pos[3]];
-  }
-  stationary.push(new StationaryObject(1000, 1000, 200, 200, "#f60", 1));
-  stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1));
-  stationary.push(new StationaryObject(1000, 1255, 200, 200, "#f60", 1));
-  stationary.push(new StationaryObject(1254, 1255, 200, 200, "#f60", 1));
+  }, flags
+  stationary.push(new StationaryObject(1000, 1000, 200, 200, "#f60", 1, void(0), flags));
+  stationary.push(new StationaryObject(1254, 1000, 200, 200, "#f60", 1, void(0), flags));
+  stationary.push(new StationaryObject(1000, 1255, 200, 200, "#f60", 1, void(0), flags));
+  stationary.push(new StationaryObject(1254, 1255, 200, 200, "#f60", 1, void(0), flags));
 })();
-(function(){
+(function(){  
+  var flags = {
+    solid       : true, //true = cannot be walked through
+    interactable: true  //true = reacts to interaction
+  };
   function MobileObject(x, y, width, height, color, renderLevel, map, program, flags) {
     if(!new.target) {
       console.log("Please call StationaryObject with 'new'! returning undefined");
@@ -45,6 +55,11 @@ var mobiles    = [];//mobile objects (npcs) on the map
     //it is either a function, or a number that corresponds to a type of 
     //behavior
     this.program = program;
+    if(flags) {
+      let keys = Object.keys(flags);
+      for(let i = keys.length-1;i >= 0; i--)
+        this[keys[i]] = flags[keys[i]];
+    }
     //state of mobile  const SPEEDUP_INTERVAL = 50;
     this.SLOWDOWN_INTERVAL = 10;
     this.INITIAL_SPEED = 0;
@@ -306,5 +321,5 @@ var mobiles    = [];//mobile objects (npcs) on the map
     }
     // this.changePosition(d, 0);
   }
-  mobiles.push(new MobileObject(500, 500, 50, 50, "#f22", 1));
+  mobiles.push(new MobileObject(500, 500, 50, 50, "#f22", 1, void(0), void(0), flags));
 })();

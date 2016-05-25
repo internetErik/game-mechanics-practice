@@ -25,10 +25,10 @@
     //check if there is an object nearby
     //this object will be a mobile or stationary object
     for(let i = mobiles.length-1; i >= 0; i--)
-      if(isInRange(cPos, facing, 20, mobiles[i]))
+      if(mobiles[i].interactable && isInRange(cPos, facing, 20, mobiles[i]))
         mobileNdxs.push(i);
     for(let i = stationary.length-1; i >= 0; i--)
-      if(isInRange(cPos, facing, 20, stationary[i]))
+      if(stationary[i].interactable && isInRange(cPos, facing, 20, stationary[i]))
         stationaryNdxs.push(i);
       console.log("mobiles",mobileNdxs);
       console.log("stationary", stationaryNdxs);
