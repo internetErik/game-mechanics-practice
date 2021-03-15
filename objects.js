@@ -2,7 +2,7 @@
 var stationary = [];//stationary objects on the map
 var mobiles    = [];//mobile objects (npcs) on the map
 (function() {
-  //these are flags for objects. 
+  //these are flags for objects.
   //in use, undefined should produce the same result as false
   var flags = {
     solid       : true, //true = cannot be walked through
@@ -35,7 +35,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
   stationary.push(new StationaryObject(1000, 1255, 200, 200, "#f60", 1, void(0), flags));
   stationary.push(new StationaryObject(1254, 1255, 200, 200, "#f60", 1, void(0), flags));
 })();
-(function(){  
+(function(){
   var flags = {
     solid       : true, //true = cannot be walked through
     interactable: true  //true = reacts to interaction
@@ -52,7 +52,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
     //map is a description of the object akin to that of the map
     this.map = map;
     //this is the program that the mobile will carry out.
-    //it is either a function, or a number that corresponds to a type of 
+    //it is either a function, or a number that corresponds to a type of
     //behavior
     this.program = program;
     if(flags) {
@@ -139,15 +139,15 @@ var mobiles    = [];//mobile objects (npcs) on the map
   }
   /**
    * Sees if the character is within view. We assume that the mob sees one screen
-   * @return {[number, number]} the x, y position to move towards (if no 
+   * @return {[number, number]} the x, y position to move towards (if no
    *                            movement, return current location)
    */
   MobileObject.prototype.findTarget = function findTarget() {
-    var L = cPos[X] + curOrigin[X], 
-        T = cPos[Y] + curOrigin[Y], 
+    var L = cPos[X] + curOrigin[X],
+        T = cPos[Y] + curOrigin[Y],
         W = CHARACTER_SIZE, H = CHARACTER_SIZE,
-        l = this.pos[X] - (GAME_WIDTH/2) + (this.pos[WIDTH]/2), 
-        t = this.pos[Y] - (GAME_HEIGHT/2) + (this.pos[HEIGHT]/2), 
+        l = this.pos[X] - (GAME_WIDTH/2) + (this.pos[WIDTH]/2),
+        t = this.pos[Y] - (GAME_HEIGHT/2) + (this.pos[HEIGHT]/2),
         w = GAME_WIDTH, h = GAME_HEIGHT;
     if(l <= L+W && l >= L-w && t <= T+H && t >= T-h)
       return [cPos[X], cPos[Y]]; //position of the target
@@ -167,7 +167,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
     else if(this.isSprinting) {}
   }
   /**
-   * 
+   *
    */
   MobileObject.prototype.startCreeping = function startCreeping() {
     this.isMoving = true;
@@ -191,7 +191,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
     //first point to speed happens faster
     if(this.speed === 0 && this.walkingTime > this.SPEEDUP_INTERVAL/3)
       this.speed++
-    else if(this.walkingTime % this.SPEEDUP_INTERVAL === 0) 
+    else if(this.walkingTime % this.SPEEDUP_INTERVAL === 0)
       this.speed++;
   }
   /**
@@ -204,7 +204,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
       this.decayWalk();
       return;
     }
-    if(this.speed > this.MAX_CREEP_SPEED) 
+    if(this.speed > this.MAX_CREEP_SPEED)
       this.speed = this.MAX_CREEP_SPEED;
     else if(this.speed < this.MAX_CREEP_SPEED) this.speedUp();
     this.moveMobile();
@@ -235,7 +235,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
   }
   /**
    * Called to see if a change in direction is a full reverse or only a turn
-   * @return {boolean} true if direction has been reversed, false if its only a turn 
+   * @return {boolean} true if direction has been reversed, false if its only a turn
    * @sideEffects: isFacing, isSlowingDown
    */
   MobileObject.prototype.reversedDirection = function reversedDirection() {
@@ -243,21 +243,21 @@ var mobiles    = [];//mobile objects (npcs) on the map
     var oldDirection = this.isFacing;
     this.setDirection();
     if(oldDirection !== this.isFacing) {
-      if(this.DIRECTION[oldDirection] === 'up') 
+      if(this.DIRECTION[oldDirection] === 'up')
         reversed = this.DIRECTION[isFacing] !== 'upRight' && this.DIRECTION[isFacing] !== 'upLeft';
-      else if(this.DIRECTION[oldDirection] === 'down') 
+      else if(this.DIRECTION[oldDirection] === 'down')
         reversed = this.DIRECTION[isFacing] !== 'downRight' && this.DIRECTION[isFacing] !== 'downLeft';
-      else if(this.DIRECTION[oldDirection] === 'left') 
+      else if(this.DIRECTION[oldDirection] === 'left')
         reversed = this.DIRECTION[isFacing] !== 'upLeft' && this.DIRECTION[isFacing] !== 'downLeft';
-      else if(this.DIRECTION[oldDirection] === 'right') 
+      else if(this.DIRECTION[oldDirection] === 'right')
         reversed = this.DIRECTION[isFacing] !== 'upRight' && this.DIRECTION[isFacing] !== 'downRight';
-      else if(this.DIRECTION[oldDirection] === 'upRight') 
+      else if(this.DIRECTION[oldDirection] === 'upRight')
         reversed = this.DIRECTION[isFacing] !== 'up' && this.DIRECTION[isFacing] !== 'right';
-      else if(this.DIRECTION[oldDirection] === 'upLeft') 
+      else if(this.DIRECTION[oldDirection] === 'upLeft')
         reversed = this.DIRECTION[isFacing] !== 'up' && this.DIRECTION[isFacing] !== 'left';
-      else if(this.DIRECTION[oldDirection] === 'downRight') 
+      else if(this.DIRECTION[oldDirection] === 'downRight')
         reversed = this.DIRECTION[isFacing] !== 'down' && this.DIRECTION[isFacing] !== 'right';
-      else if(this.DIRECTION[oldDirection] === 'downLeft') 
+      else if(this.DIRECTION[oldDirection] === 'downLeft')
         reversed = this.DIRECTION[isFacing] !== 'down' && this.DIRECTION[isFacing] !== 'left';
       if(reversed) {
         this.isFacing = oldDirection; //change facing back so we can slide to a stop
@@ -268,7 +268,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
   }
   /**
    * start slowing down character for a stop of change directions
-   * @param  {boolean} firstCall set to true on first call in order to allow 
+   * @param  {boolean} firstCall set to true on first call in order to allow
    *                   for single step to be taken
    * @return {void}
    * @sideEffects: speed, isMoving, isSlowingDown
@@ -286,7 +286,7 @@ var mobiles    = [];//mobile objects (npcs) on the map
       this.isSprinting = false;
       this.isSlowingDown = false;
     }
-    if(firstCall && this.speed === 0) { 
+    if(firstCall && this.speed === 0) {
       this.singleStep = true;
       this.speed = 1;
     }

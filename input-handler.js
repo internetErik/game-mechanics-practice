@@ -44,7 +44,7 @@ var subscribeToKeyPress;
     var keyCode = e.keyCode;
     if(keys[keyCode] !== undefined)
        keys[keyCode] = true;
-    if(subscriptions[keyCode]) 
+    if(subscriptions[keyCode])
       for(let i = subscriptions[keyCode].length-1; i >= 0; i--)
         subscriptions[keyCode][i]();
   });

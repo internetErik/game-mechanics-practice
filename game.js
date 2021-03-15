@@ -35,67 +35,67 @@
     function isInRange(agent, facing, range, patient) {
       //imagines object (=obj) as bigger by 10px on each side
       var x = patient.pos[X], y = patient.pos[Y], w = patient.pos[WIDTH], h = patient.pos[HEIGHT];
-      var cX = agent[X] + curOrigin[X], cY = agent[Y] + curOrigin[Y], 
+      var cX = agent[X] + curOrigin[X], cY = agent[Y] + curOrigin[Y],
           cW = agent[WIDTH], cH = agent[HEIGHT];
       //depending on direction being faced (=facing) detect a 'hit'
       switch(facing) {
-        case 'up': 
-          return ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w     )   ) && 
+        case 'up':
+          return ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w     )   ) &&
                  cY <= y + h + range && cY >= y;
-        case 'down': 
-          return ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w)        ) && 
+        case 'down':
+          return ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w)        ) &&
                  cY + cH >= y - range && cY + cH <= y + h;
         case 'left':
-          return ((cY + cH >= y && cY + cH <= y + h) || 
+          return ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                  cX <= x + w + range && cX >= x;
         case 'right':
-          return ((cY + cH >= y && cY + cH <= y + h) || 
+          return ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                  cX + cW >= x - range && cX + cW <= x + w;
-        case 'upLeft': 
+        case 'upLeft':
           return ( //up
-                  ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w     )   ) && 
+                  ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w     )   ) &&
                   cY <= y + h + range && cY >= y
                   ) ||
                  ( //left
-                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                   cX <= x + w + range && cX >= x
                   );
-        case 'upRight': 
+        case 'upRight':
           return ( //up
-                  ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w     )   ) && 
+                  ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w     )   ) &&
                   cY <= y + h + range && cY >= y
-                  ) || 
+                  ) ||
                  ( //right
-                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                   cX + cW >= x - range && cX + cW <= x + w
                   );
         case 'downLeft':
           return ( //down
-                  ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w)        ) && 
+                  ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w)        ) &&
                   cY + cH >= y - range && cY + cH <= y + h
-                  ) || 
+                  ) ||
                  ( //left
-                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                   cX <= x + w + range && cX >= x
                   );
-        case 'downRight': 
+        case 'downRight':
           return ( //down
-                  ((cX + cW >= x && cX + cW <= x + w) || 
-                  (cX >= x      && cX <= x + w)        ) && 
+                  ((cX + cW >= x && cX + cW <= x + w) ||
+                  (cX >= x      && cX <= x + w)        ) &&
                   cY + cH >= y - range && cY + cH <= y + h
-                  ) || 
+                  ) ||
                  ( //right
-                  ((cY + cH >= y && cY + cH <= y + h) || 
+                  ((cY + cH >= y && cY + cH <= y + h) ||
                   (cY >= y      && cY <= y + h     )   ) &&
                   cX + cW >= x - range && cX + cW <= x + w
                   );
@@ -105,5 +105,5 @@
     }
   });
   //start the game loop
-  var interval = setInterval(gameLoop.bind(this), 10);  
+  var interval = setInterval(gameLoop.bind(this), 10);
 })();
